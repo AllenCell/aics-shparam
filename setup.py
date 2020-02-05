@@ -60,6 +60,7 @@ def readme():
 test_deps = ['pytest', 'pytest-cov', 'pytest-raises', 'pytest-runner']
 
 lint_deps = ['flake8']
+
 interactive_dev_deps = [
     # -- Add libraries/modules you want to use for interactive
     # -- testing below (e.g. jupyter notebook).
@@ -70,7 +71,18 @@ interactive_dev_deps = [
     # 'ipython==7.0.1',
     # 'ipywidgets==7.4.1'
 ]
-all_deps = [*test_deps, *lint_deps, *interactive_dev_deps]
+
+other_deps = [
+  'numpy>=1.18.1',
+  'pandas>=1.0.0',
+  'scipy>=1.4.1',
+  'scikit-image>=0.16.2',
+  'scikit-learn>=0.22.1',
+  'vtk>=8.1.2',
+  'pyshtools>=4.5'    
+]
+
+all_deps = [*test_deps, *lint_deps, *interactive_dev_deps, *other_deps]
 
 extras = {
     'test': test_deps,
