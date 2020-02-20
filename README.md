@@ -4,7 +4,7 @@ Calculates the coefficients of the spherical harmonic expansion that describes a
 
 ### Example
 
-```import numpy as np
+import numpy as np
 import aicsshparam
 
 img = np.ones((32,32,32), dtype=np.uint8)
