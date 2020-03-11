@@ -8,8 +8,7 @@ from sklearn import decomposition as skdecomp
 
 def rotation_matrix(axis, theta):
 
-    """
-        Creates a rotation matrix in 3D. This will rotate an objact about the axis
+    """ Creates a rotation matrix in 3D. This will rotate an objact about the axis
         `axis` by an angle `angle`.
 
         Parameters
@@ -32,7 +31,6 @@ def rotation_matrix(axis, theta):
         -----
         This is just an implementation of Rodrigues' rotation formula:
             http://mathworld.wolfram.com/RodriguesRotationFormula.html
-
     """
 
     axis = np.asarray(axis)
@@ -49,8 +47,7 @@ def rotation_matrix(axis, theta):
 
 def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
 
-    """
-        Converts a numpy array into a vtkImageData and then into a 3d mesh
+    """ Converts a numpy array into a vtkImageData and then into a 3d mesh
         using vtkContourFilter. The input is assumed to be binary and the
         isosurface value is set to 0.5.
 
@@ -89,7 +86,6 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
         translate_to_origin : bool, optional
             Wheather or not translate the mesh to the origin (0,0,0),
             default is True.
-
     """
 
     img = array.copy()
@@ -175,9 +171,7 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
 
 def align_points(x, y, z, from_pc=0, to_axis=0):
 
-    """
-
-        Aligns a set of 3d points based on their principal components.
+    """ Aligns a set of 3d points based on their principal components.
         The alignment is made by rotating the points in such a way that the
         pricipal component `from_pc` ends up aligned with the cartesian axis
         `to_axis`.
@@ -204,7 +198,6 @@ def align_points(x, y, z, from_pc=0, to_axis=0):
             with smallest variance, default is 0.
         to_axis : {0,1,2}
             Cartesian axis of alignment. 0 = x, 1 = y and 2 = z. Default is 0.
-
     """
 
     xyz = np.hstack([
@@ -244,9 +237,7 @@ def align_points(x, y, z, from_pc=0, to_axis=0):
 
 def align_points_2d(x, y, z):
 
-    """
-
-        Aligns a set of 3d points based on their two principal components
+    """ Aligns a set of 3d points based on their two principal components
         calculated on the xy plane.
         The alignment is made by rotating the points in such a way that the
         1st pricipal component ends up aligned with the x-axis and the 2nd
@@ -264,7 +255,6 @@ def align_points_2d(x, y, z):
         -------
         x_rot and y_rot : ndarray
             Aligned x and y coordinates of the points.
-
     """
 
     xy = np.hstack([
@@ -289,15 +279,9 @@ def align_points_2d(x, y, z):
 
     return xy_rot[:, 0], xy_rot[:, 1]
 
-'''
-    
-'''
-
 def update_mesh_points(mesh, x_new, y_new, z_new):
 
-    """
-
-        Updates the xyz coordinates of points in the input mesh
+    """ Updates the xyz coordinates of points in the input mesh
         with new coordinates provided.
 
         Parameters
@@ -337,9 +321,7 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
 
 def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
-    """
-
-        Converts a parametric 2D grid of type (lon,lat,rad) into
+    """ Converts a parametric 2D grid of type (lon,lat,rad) into
         a 3d mesh.
 
         Parameters
@@ -359,7 +341,6 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
         centroid : tuple of floats, optional
             x, y and z coordinates of the centroid where the mesh
             will be translated to, default is (0,0,0).
-
     """
 
     res_lat = grid.shape[0]
@@ -403,9 +384,7 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
 def get_reconstruction_from_coeffs(coeffs, lrec=0):
 
-    """
-
-        Converts a set of spherical harmonic coefficients into
+    """ Converts a set of spherical harmonic coefficients into
         a 3d mesh.
 
         Parameters
@@ -433,7 +412,6 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
         -----
             The mesh resolution is set by the size of the coefficients
             matrix and therefore not affected by lrec.
-            
     """
 
     coeffs_ = coeffs.copy()
@@ -448,9 +426,10 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
 
 def get_reconstruction_error(grid_input, grid_rec):
 
-    """
-
-        Compute mean square error between two parametric grids.
+    """ Compute mean square error between two parametric grids. When applied
+        to the input parametric grid and its corresponsing reconstructed
+        version, it gives an idea of the quality of the parametrization with
+        low values indicate good parametrization.
 
         Parameters
         ----------
@@ -463,7 +442,6 @@ def get_reconstruction_error(grid_input, grid_rec):
         -------
         mse : float
             Mean square error
-
     """
 
     mse = np.power(grid_input - grid_rec, 2).mean()
@@ -472,9 +450,7 @@ def get_reconstruction_error(grid_input, grid_rec):
 
 def save_polydata(mesh, filename):
 
-    """
-
-        Saves a mesh as a vtkPolyData file.
+    """ Saves a mesh as a vtkPolyData file.
 
         Parameters
         ----------
@@ -482,7 +458,6 @@ def save_polydata(mesh, filename):
             Input mesh
         filename : str
             File path where the mesh will be saved
-
     """
 
     writer = vtk.vtkPolyDataWriter()
