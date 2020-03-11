@@ -103,11 +103,11 @@ setup(cmdclass={'bdist_wheel': BDistWheelBranch},
       author_email='matheus.viana@alleninstitute.org',
       license='Allen Institute Software License',
       packages=find_packages(exclude=['tests', '*.tests', '*.tests.*']),
-      entry_points={
-          "console_scripts": [
-              "my_example={}.bin.my_example:main".format(PACKAGE_NAME)
-          ]
-      },
+      # entry_points={
+      #     "console_scripts": [
+      #         "my_example={}.bin.my_example:main".format(PACKAGE_NAME)
+      #     ]
+      # },
       install_requires=[
           'numpy>=1.18.1',
           'scipy>=1.4.1',
