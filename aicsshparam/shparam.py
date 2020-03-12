@@ -62,12 +62,12 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
         Examples
         --------
         >>> import numpy as np
-        >>> import aicsshparam
+        >>> from aicsshparam import shparam, shtools
         >>> 
         >>> img = np.ones((32,32,32), dtype=np.uint8)
         >>> 
-        >>> (coeffs, grid_rec), (image_, mesh, centroid, grid) = aicsshparam.get_shcoeffs(image=img, lmax=2)
-        >>> mse = aicsshparam.shtools.get_reconstruction_error(grid,grid_rec)
+        >>> (coeffs, grid_rec), (image_, mesh, centroid, grid) = shparam.get_shcoeffs(image=img, lmax=2)
+        >>> mse = shtools.get_reconstruction_error(grid,grid_rec)
         >>> 
         >>> print('Coefficients:', coeffs)
         >>> print('Error:', mse)

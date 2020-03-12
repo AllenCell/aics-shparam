@@ -8,16 +8,16 @@ We used the Python package pyshtools (github.com/SHTOOLS) to expand the equally 
 
 ```python
 	import numpy as np
-	import aicsshparam
+	from aicsshparam import shparam, shtools
 
 	# Create a binary test image of a cube with size 32x32x32
 	img = np.ones((32,32,32), dtype=np.uint8)
 
 	# Calculate the spherical harmonics expansion up to order lmax = 2
-	(coeffs, grid_rec), (image_, mesh, centroid, grid) = aicsshparam.get_shcoeffs(image=img, lmax=2)
+	(coeffs, grid_rec), (image_, mesh, centroid, grid) = shparam.get_shcoeffs(image=img, lmax=2)
 
 	# Calculate the corresponding reconstruction error
-	mse = aicsshparam.shtools.get_reconstruction_error(grid,grid_rec)
+	mse = shtools.get_reconstruction_error(grid,grid_rec)
 
 	# Print results
 	print('Coefficients:', coeffs)
