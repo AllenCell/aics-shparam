@@ -1,5 +1,5 @@
 from .version import MODULE_VERSION
-from .shparam import get_shcoeffs
+# from .shparam import get_shcoeffs
 
 __version__ = MODULE_VERSION
 
