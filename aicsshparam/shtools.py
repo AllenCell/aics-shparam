@@ -458,9 +458,20 @@ def save_polydata(mesh, filename):
             Input mesh
         filename : str
             File path where the mesh will be saved
+        output_type : vtk or ply
+            Format of output polydata file
     """
 
-    writer = vtk.vtkPolyDataWriter()
+    # Output file format
+    output_type = filename.split('.')[-1]
+
+    if output_type not in ['vtk','ply']:
+        raise ValueError(f"Output format {output_type} not supported. Please use vtk or ply.")
+
+    if output_type == 'vtk':
+        writer = vtk.vtkPolyDataWriter()
+    else:
+        writer = vtk.vtkPLYWriter()
     writer.SetInputData(mesh)
     writer.SetFileName(filename)
     writer.Write()
