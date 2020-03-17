@@ -5,6 +5,7 @@ from vtk.util import numpy_support
 from skimage import filters as skfilters
 from skimage import morphology as skmorpho
 from sklearn import decomposition as skdecomp
+from scipy import interpolate as sciinterp
 
 def rotation_matrix(axis, theta):
 
@@ -319,11 +320,12 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
     
 '''
 
-def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
+def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
 
     """ Converts a parametric 2D grid of type (lon,lat,rad) into
         a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses
-        a spherical mesh with an even distribution of points.
+        a spherical mesh with an even distribution of points. The
+        even distribution is obtained via the Fibonacci grid rule.
 
         Parameters
         ----------
@@ -331,8 +333,6 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
             Input grid where the element grid[i,j] represents the
             radial coordinate at longitude i*2pi/grid.shape[0] and
             latitude j*pi/grid.shape[1].
-        npoints: int
-            Number of points in the initial spherical mesh
 
         Returns
         -------
@@ -341,6 +341,8 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
         
         Other parameters
         ----------------
+        npoints: int
+            Number of points in the initial spherical mesh
         centroid : tuple of floats, optional
             x, y and z coordinates of the centroid where the mesh
             will be translated to, default is (0,0,0).
@@ -349,17 +351,11 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
     res_lat = grid.shape[0]
     res_lon = grid.shape[1]
 
+    # Creates an interpolator
     lon = np.linspace(start=0, stop=2*np.pi, num=res_lon, endpoint=True)
     lat = np.linspace(start=0, stop=  np.pi, num=res_lat, endpoint=True)
 
-    grid_lon, grid_lat = np.meshgrid(lon, lat)
-
-    from scipy import interpolate
-    fgrid = interpolate.RectBivariateSpline(lon, lat, grid.T)
-
-    #
-    # Even points
-    #
+    fgrid = sciinterp.RectBivariateSpline(lon, lat, grid.T)
 
     # Create x,y,z coordinates based on the Fibonacci Lattice
     # http://extremelearning.com.au/evenly-distributing-points-on-a-sphere/
@@ -386,7 +382,7 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
     rec = vtk.vtkPolyData()
     rec.SetPoints(points)
 
-    # Calculates the connections between points
+    # Calculates the connections between points via Delaunay triangulation
     delaunay = vtk.vtkDelaunay3D()
     delaunay.SetInputData(rec)
     delaunay.Update()
@@ -395,23 +391,17 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
     surface_filter.SetInputData(delaunay.GetOutput())
     surface_filter.Update()
 
-    NITER_SMOOTH = 256
-    MAX_EDGE_LENGTH = 1
-
-    adapt = vtk.vtkAdaptiveSubdivisionFilter()
-    adapt.SetInputData(surface_filter.GetOutput())
-    adapt.SetMaximumEdgeLength(MAX_EDGE_LENGTH)
-    adapt.Update()
-
+    # Smooth the mesh to get a more even distribution of points
+    NITER_SMOOTH = 128
     smooth = vtk.vtkSmoothPolyDataFilter()
-    smooth.SetInputData(adapt.GetOutput());
+    smooth.SetInputData(surface_filter.GetOutput());
     smooth.SetNumberOfIterations(NITER_SMOOTH);
     smooth.FeatureEdgeSmoothingOff();
     smooth.BoundarySmoothingOn();
     smooth.Update();
 
     rec.DeepCopy(smooth.GetOutput())
-
+    
     # Compute normal vectors
     normals = vtk.vtkPolyDataNormals()
     normals.SetInputData(rec)
@@ -420,6 +410,52 @@ def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
     mesh = normals.GetOutput()
 
     return mesh
+
+def get_even_reconstruction_from_coeffs(coeffs, lrec=0, npoints=512):
+
+    """ Converts a set of spherical harmonic coefficients into
+        a 3d mesh using the Fibonacci grid for generating a mesh
+        with a more even distribution of points
+
+        Parameters
+        ----------
+        coeffs : ndarray
+            Input array of spherical harmonic coefficients. These
+            array has dimensions 2xLxM, where the first dimension
+            is 0 for cosine-associated coefficients and 1 for 
+            sine-associated coefficients. Second and thrid dimensions
+            represent the expansion parameters (l,m).
+
+        Returns
+        -------
+        mesh : vtkPolyData
+            Mesh that represents the input parametric grid.
+
+        Other parameters
+        ----------------
+        lrec : int, optional
+            Only coefficients l<lrec will be used for creating the
+            mesh, default is 0 meaning all coefficients available
+            in the matrix coefficients will be used.
+        npoints : int optional
+            Number of points in the initial spherical mesh
+        
+        Notes
+        -----
+            The mesh resolution is set by the size of the coefficients
+            matrix and therefore not affected by lrec.
+    """
+
+    coeffs_ = coeffs.copy()
+
+    if (lrec > 0) and (lrec < coeffs_.shape[1]):
+        coeffs_[:, lrec:, :] = 0
+
+    grid = pyshtools.expand.MakeGridDH(coeffs_, sampling=2)
+
+    mesh = get_even_reconstruction_from_grid(grid, npoints)
+    
+    return mesh, grid
 
 def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
@@ -522,6 +558,7 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
         coeffs_[:, lrec:, :] = 0
 
     grid = pyshtools.expand.MakeGridDH(coeffs_, sampling=2)
+
     mesh = get_reconstruction_from_grid(grid)
     
     return mesh, grid
