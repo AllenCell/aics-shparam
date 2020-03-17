@@ -319,10 +319,112 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
     
 '''
 
+def get_even_reconstruction_from_grid(grid, npoints=1024, centroid=(0,0,0)):
+
+    """ Converts a parametric 2D grid of type (lon,lat,rad) into
+        a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses
+        a spherical mesh with an even distribution of points.
+
+        Parameters
+        ----------
+        grid : ndarray
+            Input grid where the element grid[i,j] represents the
+            radial coordinate at longitude i*2pi/grid.shape[0] and
+            latitude j*pi/grid.shape[1].
+        npoints: int
+            Number of points in the initial spherical mesh
+
+        Returns
+        -------
+        mesh : vtkPolyData
+            Mesh that represents the input parametric grid.
+        
+        Other parameters
+        ----------------
+        centroid : tuple of floats, optional
+            x, y and z coordinates of the centroid where the mesh
+            will be translated to, default is (0,0,0).
+    """
+
+    res_lat = grid.shape[0]
+    res_lon = grid.shape[1]
+
+    lon = np.linspace(start=0, stop=2*np.pi, num=res_lon, endpoint=True)
+    lat = np.linspace(start=0, stop=  np.pi, num=res_lat, endpoint=True)
+
+    grid_lon, grid_lat = np.meshgrid(lon, lat)
+
+    from scipy import interpolate
+    fgrid = interpolate.RectBivariateSpline(lon, lat, grid.T)
+
+    #
+    # Even points
+    #
+
+    # Create x,y,z coordinates based on the Fibonacci Lattice
+    # http://extremelearning.com.au/evenly-distributing-points-on-a-sphere/
+    golden_ratio = 0.5 * ( 1 + np.sqrt(5) )
+    idxs = np.arange(0, npoints, dtype=np.float32)
+    fib_theta = np.arccos(2 * ( (idxs+0.5) / npoints ) - 1)
+    fib_phi = (2 * np.pi * ( idxs/golden_ratio )) % (2*np.pi) - np.pi
+
+    fib_lat = fib_theta
+    fib_lon = fib_phi + np.pi
+
+    fib_grid = fgrid.ev(fib_lon,fib_lat)
+
+    # Assign to sphere
+    fib_x = centroid[0] + fib_grid * np.sin(fib_theta) * np.cos(fib_phi)
+    fib_y = centroid[1] + fib_grid * np.sin(fib_theta) * np.sin(fib_phi)
+    fib_z = centroid[2] + fib_grid * np.cos(fib_theta)
+
+    # Add points (x,y,z) to a polydata
+    points = vtk.vtkPoints()
+    for (x,y,z) in zip(fib_x,fib_y,fib_z):
+        points.InsertNextPoint(x, y, z)
+
+    rec = vtk.vtkPolyData()
+    rec.SetPoints(points)
+
+    # Calculates the connections between points
+    delaunay = vtk.vtkDelaunay3D()
+    delaunay.SetInputData(rec)
+    delaunay.Update()
+
+    surface_filter = vtk.vtkDataSetSurfaceFilter()
+    surface_filter.SetInputData(delaunay.GetOutput())
+    surface_filter.Update()
+
+    NITER_SMOOTH = 256
+    MAX_EDGE_LENGTH = 1
+
+    adapt = vtk.vtkAdaptiveSubdivisionFilter()
+    adapt.SetInputData(surface_filter.GetOutput())
+    adapt.SetMaximumEdgeLength(MAX_EDGE_LENGTH)
+    adapt.Update()
+
+    smooth = vtk.vtkSmoothPolyDataFilter()
+    smooth.SetInputData(adapt.GetOutput());
+    smooth.SetNumberOfIterations(NITER_SMOOTH);
+    smooth.FeatureEdgeSmoothingOff();
+    smooth.BoundarySmoothingOn();
+    smooth.Update();
+
+    rec.DeepCopy(smooth.GetOutput())
+
+    # Compute normal vectors
+    normals = vtk.vtkPolyDataNormals()
+    normals.SetInputData(rec)
+    normals.Update()
+
+    mesh = normals.GetOutput()
+
+    return mesh
+
 def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
     """ Converts a parametric 2D grid of type (lon,lat,rad) into
-        a 3d mesh.
+        a 3d mesh. lon in [0,2pi], lat in [0,pi].
 
         Parameters
         ----------
