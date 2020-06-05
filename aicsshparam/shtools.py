@@ -2,51 +2,15 @@ import vtk
 import pyshtools
 import numpy as np
 from vtk.util import numpy_support
+from skimage import transform as sktrans
 from skimage import filters as skfilters
 from skimage import morphology as skmorpho
 from sklearn import decomposition as skdecomp
 from scipy import interpolate as sciinterp
+from scipy import stats as scistats
 
-def rotation_matrix(axis, theta):
 
-    """ Creates a rotation matrix in 3D. This will rotate an objact about the axis
-        `axis` by an angle `angle`.
-
-        Parameters
-        ----------
-        axis : tuple of floats
-            x y and z coordinates of the versor that defines the axis of rations.
-        angle : float
-            Angle of rotation in radians.
-        Returns
-        -------
-        mx_rot : ndarray
-            Matrix of rotation
-
-        Other parameters
-        ----------------
-        sigma : int, optional
-            The degree of smooth to be applied to the input image, default is 0 (no
-            smooth)
-        Notes
-        -----
-        This is just an implementation of Rodrigues' rotation formula:
-            http://mathworld.wolfram.com/RodriguesRotationFormula.html
-    """
-
-    axis = np.asarray(axis)
-    axis = axis / np.sqrt(np.dot(axis, axis))
-    a = np.cos(theta / 2.0)
-    b, c, d = -axis * np.sin(theta / 2.0)
-    aa, bb, cc, dd = a * a, b * b, c * c, d * d
-    bc, ad, ac, ab, bd, cd = b * c, a * d, a * c, a * b, b * d, c * d
-    mx_rot = np.array([
-        [aa + bb - cc - dd, 2 * (bc + ad), 2 * (bd - ac)],
-        [2 * (bc - ad), aa + cc - bb - dd, 2 * (cd + ab)],
-        [2 * (bd + ac), 2 * (cd - ab), aa + dd - bb - cc]])
-    return mx_rot
-
-def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
+def get_mesh_from_image(image, sigma=0, lcc=True, translate_to_origin=True):
 
     """ Converts a numpy array into a vtkImageData and then into a 3d mesh
         using vtkContourFilter. The input is assumed to be binary and the
@@ -64,21 +28,21 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
 
         Parameters
         ----------
-        array : ndarray
-            Input array where the polydata will be computed on
+        image : ndarray
+            Input array where the mesh will be computed on
         Returns
         -------
-        polydata : vtkPolyData
+        mesh : vtkPolyData
             3d mesh in VTK format
         img_output : ndarray
             Input image after pre-processing
-        centroid : tuple of floats
+        centroid : ndarray
             x, y, z coordinates of the mesh centroid
 
         Other parameters
         ----------------
         lcc : bool, optional
-            Wheather or not to comput the polydata only on the largest
+            Wheather or not to compute the mesh only on the largest
             connected component found in the input connected component,
             default is True.
         sigma : float, optional
@@ -89,7 +53,7 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
             default is True.
     """
 
-    img = array.copy()
+    img = image.copy()
 
     # VTK requires YXZ
     img = np.swapaxes(img, 0, 2)
@@ -97,9 +61,7 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
     # Extracting the largest connected component
     if lcc:
 
-        img = skmorpho.label(
-            img.astype(np.uint8)
-        )
+        img = skmorpho.label(img.astype(np.uint8))
 
         counts = np.bincount(img.flatten())
 
@@ -111,25 +73,26 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
     # Smooth binarize the input image and binarize
     if sigma:
 
-        img = skfilters.gaussian(
-            img.astype(np.float32),
-            sigma = (sigma, sigma, sigma)
-        )
+        img = skfilters.gaussian(img.astype(np.float32), sigma=(sigma, sigma, sigma))
 
-        img[img < 1.0/np.exp(1.0)] = 0
+        img[img < 1.0 / np.exp(1.0)] = 0
         img[img > 0] = 1
 
         if img.sum() == 0:
-            raise ValueError("No foreground voxels found after pre-processing. Try using sigma=0.")
+            raise ValueError(
+                "No foreground voxels found after pre-processing. Try using sigma=0."
+            )
 
     # Set image border to 0 so that the mesh forms a manifold
-    img[[0,-1], :, :] = 0
-    img[:, [0,-1], :] = 0
-    img[:, :, [0,-1]] = 0
+    img[[0, -1], :, :] = 0
+    img[:, [0, -1], :] = 0
+    img[:, :, [0, -1]] = 0
     img = img.astype(np.float32)
 
     if img.sum() == 0:
-        raise ValueError("No foreground voxels found after pre-processing. Is the object of interest centered?")
+        raise ValueError(
+            "No foreground voxels found after pre-processing. Is the object of interest centered?"
+        )
 
     # Create vtkImageData
     imgdata = vtk.vtkImageData()
@@ -139,7 +102,7 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
     img_output = img.copy()
     img = img.flatten()
     arr = numpy_support.numpy_to_vtk(img, array_type=vtk.VTK_FLOAT)
-    arr.SetName('Scalar')
+    arr.SetName("Scalar")
     imgdata.GetPointData().SetScalars(arr)
 
     # Create 3d mesh
@@ -148,137 +111,208 @@ def get_polydata_from_numpy(array, sigma=0, lcc=True, translate_to_origin=True):
     cf.SetValue(0, 0.5)
     cf.Update()
 
-    polydata = cf.GetOutput()
+    mesh = cf.GetOutput()
 
     # Calculate the mesh centroid
     xo, yo, zo = 0, 0, 0
-    for i in range(polydata.GetNumberOfPoints()):
-        x, y, z = polydata.GetPoints().GetPoint(i)
+    for i in range(mesh.GetNumberOfPoints()):
+        x, y, z = mesh.GetPoints().GetPoint(i)
         xo += x
         yo += y
         zo += z
-    xo /= polydata.GetNumberOfPoints()
-    yo /= polydata.GetNumberOfPoints()
-    zo /= polydata.GetNumberOfPoints()
-    centroid = (xo, yo, zo)
-    
+    xo /= mesh.GetNumberOfPoints()
+    yo /= mesh.GetNumberOfPoints()
+    zo /= mesh.GetNumberOfPoints()
+    centroid = np.array([xo, yo, zo])
+
     # Translate to origin
     if translate_to_origin:
-        for i in range(polydata.GetNumberOfPoints()):
-            x, y, z = polydata.GetPoints().GetPoint(i)
-            polydata.GetPoints().SetPoint(i, x-xo, y-yo, z-zo)
+        for i in range(mesh.GetNumberOfPoints()):
+            x, y, z = mesh.GetPoints().GetPoint(i)
+            mesh.GetPoints().SetPoint(i, x - xo, y - yo, z - zo)
 
-    return polydata, img_output, centroid
+    return mesh, img_output, centroid
 
-def align_points(x, y, z, from_pc=0, to_axis=0):
 
-    """ Aligns a set of 3d points based on their principal components.
-        The alignment is made by rotating the points in such a way that the
-        pricipal component `from_pc` ends up aligned with the cartesian axis
-        `to_axis`.
+def rotate_image_2d(image, angle, interpolation_order=0):
 
-        We also flip the points coordinates in each axes if necessary to
-        maintain positive the correlation coefficient on each pairwise
-        projection.
+    """ Rotate multichannel image in 2D by a given angle. The
+        expected shape of image is (C,Z,Y,X). The rotation will
+        be done around the center of the image.
 
         Parameters
         ----------
-        x, y and z : ndarray
-            Input array with x, y and z coordinates of the points
-
+        angle : float
+            Angle in degrees
+        interpolation_order : int
+            Order of interpolation used during the image rotation
         Returns
         -------
-        x_rot, y_rot and z_rot : ndarray
-            Aligned x, y and z coordinates of the points
-
-        Other parameters
-        ----------------
-        from_pc : {0,1,2}
-            Principal component which will be aligned with the cartesian
-            axis specified by `to_axis`. 0 - pc with largest variance, 2 - pc
-            with smallest variance, default is 0.
-        to_axis : {0,1,2}
-            Cartesian axis of alignment. 0 = x, 1 = y and 2 = z. Default is 0.
+        img_rot : ndarray
+            Rotated image
     """
 
-    xyz = np.hstack([
-        x.reshape(-1, 1),
-        y.reshape(-1, 1),
-        z.reshape(-1, 1)])
+    if image.ndim != 4:
+        raise ValueError(f"Invalid shape {image.shape} of input image.")
 
-    cartesian_axes = np.array([
-        [1, 0, 0],
-        [0, 1, 0],
-        [0, 0, 1]])
+    if not isinstance(interpolation_order, int):
+        raise ValueError("Only integer values are accepted for interpolation order.")
 
-    eigenvecs = skdecomp.PCA(n_components=3).fit(xyz).components_
+    # Make z to be the last axis. Required for skimage rotation
+    image = np.swapaxes(image, 1, 3)
 
-    # Make sure aigenvectors are unitary
-    theta = np.arccos(np.clip(np.dot(eigenvecs[from_pc], cartesian_axes[to_axis]), -1.0, 1.0))
+    img_aligned = []
+    for stack in image:
+        stack_aligned = sktrans.rotate(
+            image=stack,
+            angle=-angle,
+            resize=True,
+            order=interpolation_order,
+            preserve_range=True,
+        )
+        img_aligned.append(stack_aligned)
+    img_aligned = np.array(img_aligned)
 
-    # Vectorial product to get the pivot vector
-    pivot = np.cross(eigenvecs[from_pc], cartesian_axes[to_axis])
-    
-    # Check if points are already aligned
-    if np.square(pivot).sum() < 1e-8:
-        return x, y, z
+    # Swap axes back
+    img_aligned = np.swapaxes(img_aligned, 1, 3)
 
-    rot_mx = rotation_matrix(pivot, theta)
-                
-    xyz_rot = np.dot(rot_mx, xyz.T).T
+    img_aligned = img_aligned.astype(image.dtype)
 
-    # Correlation coeff xz, yz:
-
-    for ax in [0,1]:
-        if np.corrcoef(xyz_rot[:, ax], xyz_rot[:, 2])[0, 1] < 0.0:
-            xyz_rot[:, ax] *= -1
-
-    return xyz_rot[:, 0], xyz_rot[:, 1], xyz_rot[:, 2]
+    return img_aligned
 
 
-def align_points_2d(x, y, z):
+def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
 
-    """ Aligns a set of 3d points based on their two principal components
-        calculated on the xy plane.
-        The alignment is made by rotating the points in such a way that the
-        1st pricipal component ends up aligned with the x-axis and the 2nd
-        principal component is aligned with y-axis.
-
-        We also flip the points coordinates in each axes if necessary to
-        maintain positive the correlation coefficient on each pairwise
-        projection.
+    """ Align a multichannel 3D image based on the channel
+        specified by alignment_channel. The expected shape of
+        image is (C,Z,Y,X) or (Z,Y,X).
 
         Parameters
         ----------
-        x, y and z : ndarray
-            Input array with x, y and z coordinates of the points
+        image : ndarray
+            Input array of shape (C,Z,Y,X) or (Z,Y,X).
+        alignment_channel: int
+            Number of channel to be used as reference for alignemnt. The
+            alignment will be propagated to all other channels.
         Returns
         -------
-        x_rot and y_rot : ndarray
-            Aligned x and y coordinates of the points.
+        img_aligned : ndarray
+            Aligned image
+        (xc, yc, zc, angle, flip_x, flip_y) : tuple of floats
+            x, y and z coordinates of shape centroid. Angle used for
+            align the shape and the flipping factors. flip_k = -1
+            indicates that coordinate k was flipped.
     """
 
-    xy = np.hstack([
-        x.reshape(-1, 1),
-        y.reshape(-1, 1)])
+    if image.ndim not in [3, 4]:
+        raise ValueError(f"Invalid shape {image.shape} of input image.")
+
+    if image.ndim == 4 and alignment_channel is None:
+        raise ValueError(
+            "An alignment channel must be provided with multichannel images."
+        )
+
+    if not isinstance(alignment_channel, int):
+        raise ValueError("Number of alignment channel must be an integer")
+
+    if image.ndim == 3:
+        alignment_channel = 0
+        image = image.reshape(1, *image.shape)
+
+    z, y, x = np.where(image[alignment_channel])
+
+    xc = x.mean()
+    yc = y.mean()
+    zc = z.mean()
+
+    xy = np.hstack([x.reshape(-1, 1), y.reshape(-1, 1)])
 
     eigenvecs = skdecomp.PCA(n_components=2).fit(xy).components_
 
-    theta_proj = -np.arctan2(eigenvecs[0][1],eigenvecs[0][0])
+    angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
 
-    rot_mx = [
-        [np.cos(theta_proj), np.sin(-theta_proj)],
-        [np.sin(theta_proj), np.cos(theta_proj)]]
-        
-    xy_rot = np.dot(rot_mx, xy.T).T
+    if preserve_chirality:
+        # Check the skewness of the x coordinate
+        xsk = scistats.skew(x)
+        if xsk < 0.0:
+            angle += 180
 
-    # Correlation coeff xz, yz:
+    # Map all angles to anti-clockwise
+    angle = angle % 360
 
-    for ax in [0, 1]:
-        if np.corrcoef(xy_rot[:,ax], z)[0, 1] < 0.0:
-            xy_rot[:, ax] *= -1
+    # Apply skimage rotation
+    img_aligned = rotate_image_2d(image=image, angle=angle)
 
-    return xy_rot[:, 0], xy_rot[:, 1]
+    flip_x = 1
+    flip_y = 1
+    if not preserve_chirality:
+
+        # Flipping x and y axes to keep correlation positive
+        z, y, x = np.where(img_aligned[alignment_channel])
+        if np.corrcoef(x, z)[0, 1] < 0.0:
+            flip_x = -1
+            img_aligned = img_aligned[:, :, :, ::-1]
+        if np.corrcoef(y, z)[0, 1] < 0.0:
+            flip_y = -1
+            img_aligned = img_aligned[:, :, ::-1, :]
+
+    return img_aligned, (xc, yc, zc, angle, flip_x, flip_y)
+
+
+def apply_image_alignment_2d(image, angle, flip_x, flip_y):
+
+    """ Apply an existing set of alignment parameters to a
+        multichannel 3D image. The expected shape of
+        image is (C,Z,Y,X) or (Z,Y,X).
+
+        Parameters
+        ----------
+        image : ndarray
+            Input array of shape (C,Z,Y,X) or (Z,Y,X).
+        angle : float
+            2D rotation angle in degrees
+        flip_x : [1,-1]
+            Whether coordinate x should be flipped (-1) or not  (1)
+            prior rotation
+        flip_y : [1,-1]
+            Whether coordinate y should be flipped (-1) or not  (1)
+            prior rotation
+        Returns
+        -------
+        img_aligned : ndarray
+            Aligned image
+    """
+
+    if image.ndim not in [3, 4]:
+        raise ValueError(f"Invalid shape {image.shape} of input image.")
+
+    if not isinstance(flip_x, int):
+        raise ValueError("flip_x must be an integer.")
+
+    if not isinstance(flip_y, int):
+        raise ValueError("flip_y must be an integer.")
+
+    if flip_x not in [-1, 1]:
+        raise ValueError(
+            f"Values accepted for flip_x are -1 or 1. Value provided: {flip_x}."
+        )
+
+    if flip_y not in [-1, 1]:
+        raise ValueError(
+            f"Values accepted for flip_y are -1 or 1. Value provided: {flip_y}."
+        )
+
+    if image.ndim == 3:
+        image = image.reshape(1, *image.shape)
+
+    img_aligned = rotate_image_2d(image=image, angle=angle)
+
+    img_aligned = img_aligned[:, :, :, ::flip_x]
+
+    img_aligned = img_aligned[:, :, ::flip_y, :]
+
+    return img_aligned
+
 
 def update_mesh_points(mesh, x_new, y_new, z_new):
 
@@ -295,7 +329,7 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
         -------
         mesh_updated : vtkPolyData
             Mesh with updated coordinates.
-        
+
         Notes
         -----
         This function also re-calculate the new normal vectors
@@ -316,11 +350,8 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
 
     return mesh_updated
 
-'''
-    
-'''
 
-def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
+def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0, 0, 0)):
 
     """ Converts a parametric 2D grid of type (lon,lat,rad) into
         a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses
@@ -338,7 +369,7 @@ def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
         -------
         mesh : vtkPolyData
             Mesh that represents the input parametric grid.
-        
+
         Other parameters
         ----------------
         npoints: int
@@ -352,22 +383,22 @@ def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
     res_lon = grid.shape[1]
 
     # Creates an interpolator
-    lon = np.linspace(start=0, stop=2*np.pi, num=res_lon, endpoint=True)
-    lat = np.linspace(start=0, stop=  np.pi, num=res_lat, endpoint=True)
+    lon = np.linspace(start=0, stop=2 * np.pi, num=res_lon, endpoint=True)
+    lat = np.linspace(start=0, stop=1 * np.pi, num=res_lat, endpoint=True)
 
     fgrid = sciinterp.RectBivariateSpline(lon, lat, grid.T)
 
     # Create x,y,z coordinates based on the Fibonacci Lattice
     # http://extremelearning.com.au/evenly-distributing-points-on-a-sphere/
-    golden_ratio = 0.5 * ( 1 + np.sqrt(5) )
+    golden_ratio = 0.5 * (1 + np.sqrt(5))
     idxs = np.arange(0, npoints, dtype=np.float32)
-    fib_theta = np.arccos(2 * ( (idxs+0.5) / npoints ) - 1)
-    fib_phi = (2 * np.pi * ( idxs/golden_ratio )) % (2*np.pi) - np.pi
+    fib_theta = np.arccos(2 * ((idxs + 0.5) / npoints) - 1)
+    fib_phi = (2 * np.pi * (idxs / golden_ratio)) % (2 * np.pi) - np.pi
 
     fib_lat = fib_theta
     fib_lon = fib_phi + np.pi
 
-    fib_grid = fgrid.ev(fib_lon,fib_lat)
+    fib_grid = fgrid.ev(fib_lon, fib_lat)
 
     # Assign to sphere
     fib_x = centroid[0] + fib_grid * np.sin(fib_theta) * np.cos(fib_phi)
@@ -376,7 +407,7 @@ def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
 
     # Add points (x,y,z) to a polydata
     points = vtk.vtkPoints()
-    for (x,y,z) in zip(fib_x,fib_y,fib_z):
+    for (x, y, z) in zip(fib_x, fib_y, fib_z):
         points.InsertNextPoint(x, y, z)
 
     rec = vtk.vtkPolyData()
@@ -394,14 +425,14 @@ def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
     # Smooth the mesh to get a more even distribution of points
     NITER_SMOOTH = 128
     smooth = vtk.vtkSmoothPolyDataFilter()
-    smooth.SetInputData(surface_filter.GetOutput());
-    smooth.SetNumberOfIterations(NITER_SMOOTH);
-    smooth.FeatureEdgeSmoothingOff();
-    smooth.BoundarySmoothingOn();
-    smooth.Update();
+    smooth.SetInputData(surface_filter.GetOutput())
+    smooth.SetNumberOfIterations(NITER_SMOOTH)
+    smooth.FeatureEdgeSmoothingOff()
+    smooth.BoundarySmoothingOn()
+    smooth.Update()
 
     rec.DeepCopy(smooth.GetOutput())
-    
+
     # Compute normal vectors
     normals = vtk.vtkPolyDataNormals()
     normals.SetInputData(rec)
@@ -410,6 +441,7 @@ def get_even_reconstruction_from_grid(grid, npoints=512, centroid=(0,0,0)):
     mesh = normals.GetOutput()
 
     return mesh
+
 
 def get_even_reconstruction_from_coeffs(coeffs, lrec=0, npoints=512):
 
@@ -422,7 +454,7 @@ def get_even_reconstruction_from_coeffs(coeffs, lrec=0, npoints=512):
         coeffs : ndarray
             Input array of spherical harmonic coefficients. These
             array has dimensions 2xLxM, where the first dimension
-            is 0 for cosine-associated coefficients and 1 for 
+            is 0 for cosine-associated coefficients and 1 for
             sine-associated coefficients. Second and thrid dimensions
             represent the expansion parameters (l,m).
 
@@ -439,7 +471,7 @@ def get_even_reconstruction_from_coeffs(coeffs, lrec=0, npoints=512):
             in the matrix coefficients will be used.
         npoints : int optional
             Number of points in the initial spherical mesh
-        
+
         Notes
         -----
             The mesh resolution is set by the size of the coefficients
@@ -454,8 +486,9 @@ def get_even_reconstruction_from_coeffs(coeffs, lrec=0, npoints=512):
     grid = pyshtools.expand.MakeGridDH(coeffs_, sampling=2)
 
     mesh = get_even_reconstruction_from_grid(grid, npoints)
-    
+
     return mesh, grid
+
 
 def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
@@ -473,7 +506,7 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
         -------
         mesh : vtkPolyData
             Mesh that represents the input parametric grid.
-        
+
         Other parameters
         ----------------
         centroid : tuple of floats, optional
@@ -486,30 +519,30 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
     # Creates an initial spherical mesh with right dimensions.
     rec = vtk.vtkSphereSource()
-    rec.SetPhiResolution(res_lat+2)
+    rec.SetPhiResolution(res_lat + 2)
     rec.SetThetaResolution(res_lon)
     rec.Update()
     rec = rec.GetOutput()
 
-    n = rec.GetNumberOfPoints()
-
     grid_ = grid.T.flatten()
 
     # Update the points coordinates of the spherical mesh according to the inout grid
-    for j, lon in enumerate(np.linspace(0, 2*np.pi, num=res_lon, endpoint=False)):
-        for i, lat in enumerate(np.linspace(np.pi/(res_lat+1), np.pi, num=res_lat, endpoint=False)):
+    for j, lon in enumerate(np.linspace(0, 2 * np.pi, num=res_lon, endpoint=False)):
+        for i, lat in enumerate(
+            np.linspace(np.pi / (res_lat + 1), np.pi, num=res_lat, endpoint=False)
+        ):
             theta = lat
             phi = lon - np.pi
             k = j * res_lat + i
-            x = centroid[0] + grid_[k] * np.sin(theta)*np.cos(phi)
-            y = centroid[1] + grid_[k] * np.sin(theta)*np.sin(phi)
+            x = centroid[0] + grid_[k] * np.sin(theta) * np.cos(phi)
+            y = centroid[1] + grid_[k] * np.sin(theta) * np.sin(phi)
             z = centroid[2] + grid_[k] * np.cos(theta)
-            rec.GetPoints().SetPoint(k+2, x, y, z)
+            rec.GetPoints().SetPoint(k + 2, x, y, z)
     # Update coordinates of north and south pole points
     north = grid_[::res_lat].mean()
-    south = grid_[res_lat-1::res_lat].mean()
-    rec.GetPoints().SetPoint(0, centroid[0]+0, centroid[1]+0, centroid[2]+north)
-    rec.GetPoints().SetPoint(1, centroid[0]+0, centroid[1]+0, centroid[2]-south)
+    south = grid_[(res_lat-1)::res_lat].mean()
+    rec.GetPoints().SetPoint(0, centroid[0] + 0, centroid[1] + 0, centroid[2] + north)
+    rec.GetPoints().SetPoint(1, centroid[0] + 0, centroid[1] + 0, centroid[2] - south)
 
     # Compute normal vectors
     normals = vtk.vtkPolyDataNormals()
@@ -519,6 +552,7 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
     mesh = normals.GetOutput()
 
     return mesh
+
 
 def get_reconstruction_from_coeffs(coeffs, lrec=0):
 
@@ -530,7 +564,7 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
         coeffs : ndarray
             Input array of spherical harmonic coefficients. These
             array has dimensions 2xLxM, where the first dimension
-            is 0 for cosine-associated coefficients and 1 for 
+            is 0 for cosine-associated coefficients and 1 for
             sine-associated coefficients. Second and thrid dimensions
             represent the expansion parameters (l,m).
 
@@ -545,7 +579,7 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
             Only coefficients l<lrec will be used for creating the
             mesh, default is 0 meaning all coefficients available
             in the matrix coefficients will be used.
-        
+
         Notes
         -----
             The mesh resolution is set by the size of the coefficients
@@ -560,8 +594,9 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
     grid = pyshtools.expand.MakeGridDH(coeffs_, sampling=2)
 
     mesh = get_reconstruction_from_grid(grid)
-    
+
     return mesh, grid
+
 
 def get_reconstruction_error(grid_input, grid_rec):
 
@@ -587,6 +622,7 @@ def get_reconstruction_error(grid_input, grid_rec):
 
     return mse
 
+
 def save_polydata(mesh, filename):
 
     """ Saves a mesh as a vtkPolyData file.
@@ -602,16 +638,17 @@ def save_polydata(mesh, filename):
     """
 
     # Output file format
-    output_type = filename.split('.')[-1]
+    output_type = filename.split(".")[-1]
 
-    if output_type not in ['vtk','ply']:
-        raise ValueError(f"Output format {output_type} not supported. Please use vtk or ply.")
+    if output_type not in ["vtk", "ply"]:
+        raise ValueError(
+            f"Output format {output_type} not supported. Please use vtk or ply."
+        )
 
-    if output_type == 'vtk':
+    if output_type == "vtk":
         writer = vtk.vtkPolyDataWriter()
     else:
         writer = vtk.vtkPLYWriter()
     writer.SetInputData(mesh)
     writer.SetFileName(filename)
     writer.Write()
-

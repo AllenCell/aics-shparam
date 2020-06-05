@@ -1,11 +1,15 @@
 import pyshtools
 import numpy as np
+from vtk.util import numpy_support
 from skimage import transform as sktrans
 from scipy import interpolate as spinterp
 
 from . import shtools
 
-def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
+
+def get_shcoeffs(
+    image, lmax, sigma=0, compute_lcc=True, alignment_2d=True, preserve_chirality=True
+):
 
     """Compute spherical harmonics coefficients that describe an object stored as
     an image.
@@ -15,12 +19,13 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
         does not need to be binary and all foreground voxels (background=0) are used
         in the computation. Foreground voxels must form a single connected component.
         If you are sure that this is the case for the input image, you can set
-        compute_lcc to False to speed up the calculation.
+        compute_lcc to False to speed up the calculation. In addition, the shape is
+        expected to be centered in the input image.
 
         Parameters
         ----------
         image : ndarray
-            Input image.
+            Input image. Expected to have shape ZYX.
         lmax : int
             Order of the spherical harmonics parametrization. The higher the order
             the more shape details are represented.
@@ -35,10 +40,12 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
             Input image after pre-processing (lcc calculation, smooth and binarization).
         mesh : vtkPolyData
             Polydata representation of image_.
-        centroid : tuple of floats
-            x, y and z coordinates of object centroid.
         grid_down : ndarray
             Parametric grid representing input object.
+        transform : tuple of floats
+            xc, yc, zc, angle, flip_x, flip_y - (x,y,z) coordinates of the shape
+            centroid; the angle used to align the image; and the flipping of x and
+            y coordinates. flip_k = -1 indicates coordinate k was flipped.
 
         Other parameters
         ----------------
@@ -51,9 +58,11 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
             False in case you are sure the input image contains a single connected
             component. It is crucial that parametrization is calculated on a single
             connected component object.
-        alignment_mode : {'2d', '3d', None}, optional
-            Wheather the image should be aligned in 2d, 3d or not aligned.
-            Default is '2d'. See `shtools.align_points` for detail.
+        alignment_2d : bool
+            Wheather the image should be aligned in 2d. Default is True.
+        preserve_chirality : bool
+            Mirrored shapes would have different coefficients if chirality is
+            preserved.
         Notes
         -----
         Alignment mode '2d' allows for keeping the z axis unchanged which might be
@@ -63,12 +72,12 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
         --------
         >>> import numpy as np
         >>> from aicsshparam import shparam, shtools
-        >>> 
+        >>>
         >>> img = np.ones((32,32,32), dtype=np.uint8)
-        >>> 
-        >>> (coeffs, grid_rec), (image_, mesh, centroid, grid) = shparam.get_shcoeffs(image=img, lmax=2)
+        >>>
+        >>> (coeffs, grid_rec), (image_, mesh, grid, transform) = shparam.get_shcoeffs(image=img, lmax=2)
         >>> mse = shtools.get_reconstruction_error(grid,grid_rec)
-        >>> 
+        >>>
         >>> print('Coefficients:', coeffs)
         >>> print('Error:', mse)
         Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0, 'shcoeffs_L0M2C':
@@ -92,52 +101,45 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
     image_ = image.copy()
     image_[image_ > 0] = 1
 
-    # Converting the 
-    mesh, image_, centroid = shtools.get_polydata_from_numpy(
-        array = image_, sigma = sigma)
-
-    # Extract x, y and z coordinates from points in the mesh
-    x, y, z = [], [], []
-    for i in range(mesh.GetNumberOfPoints()):
-        r = mesh.GetPoints().GetPoint(i)
-        x.append(r[0])
-        y.append(r[1])
-        z.append(r[2])
-    x = np.array(x)
-    y = np.array(y)
-    z = np.array(z)
-
-    if alignment_mode == '2d':
+    # Alignment
+    transform = None
+    if alignment_2d:
         # Align the points such that the longest axis of the 2d
-        # xy projection will be horizontal (along x)
-        x, y = shtools.align_points_2d(x,y,z)
+        # xy max projected shape will be horizontal (along x)
+        image_, transform = shtools.align_image_2d(
+            image=image_, preserve_chirality=preserve_chirality
+        )
+        image_ = image_.squeeze()
 
-    elif alignment_mode == '3d':
-        # Align the points such that the longest axis will be
-        # horizontal (along x) and 2nd longest axis will be
-        # vertical (along y)
-        x, y, z = shtools.align_points(x, y, z, from_pc=0, to_axis=0)
-        x, y, z = shtools.align_points(x, y, z, from_pc=1, to_axis=1)
+    # Converting the
+    mesh, image_, _ = shtools.get_mesh_from_image(image=image_, sigma=sigma)
+
+    # Get coordinates of mesh points
+    coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
+    x = coords[:, 0]
+    y = coords[:, 1]
+    z = coords[:, 2]
 
     # Translate and align mesh points
-    mesh = shtools.update_mesh_points(mesh,x,y,z)
+    mesh = shtools.update_mesh_points(mesh, x, y, z)
 
     # Cartesian to spherical coordinates convertion
-    rad = np.sqrt(x**2+y**2+z**2)
-    lat = np.arccos(np.divide(z, rad, out=np.zeros_like(rad), where=rad!=0))
-    lon = np.pi + np.arctan2(y,x)
+    rad = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    lat = np.arccos(np.divide(z, rad, out=np.zeros_like(rad), where=(rad != 0)))
+    lon = np.pi + np.arctan2(y, x)
 
     # Creating a meshgrid data from (lon,lat,r)
     points = np.concatenate(
-        [np.array(lon).reshape(-1, 1),np.array(lat).reshape(-1, 1)], axis=1)
+        [np.array(lon).reshape(-1, 1), np.array(lat).reshape(-1, 1)], axis=1
+    )
 
     grid_lon, grid_lat = np.meshgrid(
-        np.linspace(start=0, stop=2*np.pi, num=256, endpoint=True),
-        np.linspace(start=0, stop=  np.pi, num=128, endpoint=True)
+        np.linspace(start=0, stop=2 * np.pi, num=256, endpoint=True),
+        np.linspace(start=0, stop=1 * np.pi, num=128, endpoint=True),
     )
 
     # Interpolate the (lon,lat,r) data into a grid
-    grid = spinterp.griddata(points, rad, (grid_lon, grid_lat), method='nearest')
+    grid = spinterp.griddata(points, rad, (grid_lon, grid_lat), method="nearest")
 
     # Fit grid data with SH. Look at pyshtools for detail.
     coeffs = pyshtools.expand.SHExpandDH(grid, sampling=2, lmax_calc=lmax)
@@ -149,14 +151,13 @@ def get_shcoeffs(image, lmax, sigma=0, compute_lcc=True, alignment_mode='2d'):
     grid_down = sktrans.resize(grid, output_shape=grid_rec.shape, preserve_range=True)
 
     # Create (l,m) keys for the coefficient dictionary
-    lvalues = np.repeat(
-        np.arange(lmax+1).reshape(-1, 1), lmax+1, axis=1)
+    lvalues = np.repeat(np.arange(lmax + 1).reshape(-1, 1), lmax + 1, axis=1)
 
     keys = []
-    for suffix in ['C','S']:
-        for (l,m) in zip(lvalues.flatten(),lvalues.T.flatten()):
-            keys.append(f'shcoeffs_L{l}M{m}{suffix}')
+    for suffix in ["C", "S"]:
+        for (l, m) in zip(lvalues.flatten(), lvalues.T.flatten()):
+            keys.append(f"shcoeffs_L{l}M{m}{suffix}")
 
     coeffs_dict = dict(zip(keys, coeffs.flatten()))
 
-    return (coeffs_dict, grid_rec), (image_, mesh, centroid, grid_down)
+    return (coeffs_dict, grid_rec), (image_, mesh, grid_down, transform)

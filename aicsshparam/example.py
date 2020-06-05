@@ -8,7 +8,6 @@ log = logging.getLogger(__name__)
 
 
 class Example:
-
     def __init__(self, init_value: int = 10):
         self.current_value = init_value
         self.old_value = 0
