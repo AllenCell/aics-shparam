@@ -123,7 +123,7 @@ def get_mesh_from_image(image, sigma=0, lcc=True, translate_to_origin=True):
     xo /= mesh.GetNumberOfPoints()
     yo /= mesh.GetNumberOfPoints()
     zo /= mesh.GetNumberOfPoints()
-    centroid = np.array([xo, yo, zo])
+    centroid = (xo, yo, zo)
 
     # Translate to origin
     if translate_to_origin:
@@ -207,13 +207,11 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
     if image.ndim not in [3, 4]:
         raise ValueError(f"Invalid shape {image.shape} of input image.")
 
-    if image.ndim == 4 and alignment_channel is None:
-        raise ValueError(
-            "An alignment channel must be provided with multichannel images."
-        )
-
-    if not isinstance(alignment_channel, int):
-        raise ValueError("Number of alignment channel must be an integer")
+    if image.ndim == 4:
+        if alignment_channel is None:
+            raise ValueError("An alignment channel must be provided with multichannel images.")
+        if not isinstance(alignment_channel, int):
+            raise ValueError("Number of alignment channel must be an integer")
 
     if image.ndim == 3:
         alignment_channel = 0
@@ -256,7 +254,7 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
             flip_y = -1
             img_aligned = img_aligned[:, :, ::-1, :]
 
-    return img_aligned, (xc, yc, zc, angle, flip_x, flip_y)
+    return img_aligned, (angle, flip_x, flip_y)
 
 
 def apply_image_alignment_2d(image, angle, flip_x, flip_y):

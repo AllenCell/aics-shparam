@@ -43,9 +43,11 @@ def get_shcoeffs(
         grid_down : ndarray
             Parametric grid representing input object.
         transform : tuple of floats
-            xc, yc, zc, angle, flip_x, flip_y - (x,y,z) coordinates of the shape
-            centroid; the angle used to align the image; and the flipping of x and
-            y coordinates. flip_k = -1 indicates coordinate k was flipped.
+            (xc, yc, zc, angle, flip_x, flip_y) if alignment_2d is True or
+            (xc, yc, zc) if alignment_2d is False. (xc, yc, zc) are the coordinates
+            of the shape centroid after alignment; angle is the angle used to align
+            the image; and the flipping of x and y coordinates. flip_k = -1 indicates
+            coordinate k was flipped.
 
         Other parameters
         ----------------
@@ -112,13 +114,15 @@ def get_shcoeffs(
         image_ = image_.squeeze()
 
     # Converting the
-    mesh, image_, _ = shtools.get_mesh_from_image(image=image_, sigma=sigma)
+    mesh, image_, centroid = shtools.get_mesh_from_image(image=image_, sigma=sigma)
 
     # Get coordinates of mesh points
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
     x = coords[:, 0]
     y = coords[:, 1]
     z = coords[:, 2]
+
+    transform = centroid + (transform if transform is not None else ())
 
     # Translate and align mesh points
     mesh = shtools.update_mesh_points(mesh, x, y, z)
