@@ -114,25 +114,14 @@ def get_mesh_from_image(image, sigma=0, lcc=True, translate_to_origin=True):
     mesh = cf.GetOutput()
 
     # Calculate the mesh centroid
-    xo, yo, zo = 0, 0, 0
-    for i in range(mesh.GetNumberOfPoints()):
-        x, y, z = mesh.GetPoints().GetPoint(i)
-        xo += x
-        yo += y
-        zo += z
-    xo /= mesh.GetNumberOfPoints()
-    yo /= mesh.GetNumberOfPoints()
-    zo /= mesh.GetNumberOfPoints()
-    centroid = (xo, yo, zo)
+    coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
+    centroid = coords.mean(axis=0, keepdims=True)
 
     # Translate to origin
-    if translate_to_origin:
-        for i in range(mesh.GetNumberOfPoints()):
-            x, y, z = mesh.GetPoints().GetPoint(i)
-            mesh.GetPoints().SetPoint(i, x - xo, y - yo, z - zo)
+    coords -= centroid
+    mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(coords))
 
-    return mesh, img_output, centroid
-
+    return mesh, img_output, tuple(centroid.squeeze())
 
 def rotate_image_2d(image, angle, interpolation_order=0):
 
@@ -198,10 +187,9 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
         -------
         img_aligned : ndarray
             Aligned image
-        (xc, yc, zc, angle, flip_x, flip_y) : tuple of floats
-            x, y and z coordinates of shape centroid. Angle used for
-            align the shape and the flipping factors. flip_k = -1
-            indicates that coordinate k was flipped.
+        (angle, flip_x, flip_y) : tuple of floats
+            Angle used for align the shape and the flipping factors.
+            flip_k = -1 indicates that coordinate k was flipped.
     """
 
     if image.ndim not in [3, 4]:
@@ -334,8 +322,7 @@ def update_mesh_points(mesh, x_new, y_new, z_new):
         for the updated mesh.
     """
 
-    for i in range(mesh.GetNumberOfPoints()):
-        mesh.GetPoints().SetPoint(i, x_new[i], y_new[i], z_new[i])
+    mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(np.c_[x_new,y_new,z_new]))
     mesh.Modified()
 
     # Fix normal vectors orientation

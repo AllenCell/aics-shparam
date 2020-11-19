@@ -113,8 +113,11 @@ def get_shcoeffs(
         )
         image_ = image_.squeeze()
 
-    # Converting the
+    # Converting the input image into a mesh using regular marching cubes
     mesh, image_, centroid = shtools.get_mesh_from_image(image=image_, sigma=sigma)
+
+    if not image_[tuple([int(u) for u in centroid[::-1]])]:
+        print('Warning: Centroid seems to fall off the object...')
 
     # Get coordinates of mesh points
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
@@ -124,7 +127,7 @@ def get_shcoeffs(
 
     transform = centroid + (transform if transform is not None else ())
 
-    # Translate and align mesh points
+    # Translate and update mesh normals
     mesh = shtools.update_mesh_points(mesh, x, y, z)
 
     # Cartesian to spherical coordinates convertion
