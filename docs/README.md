@@ -37,9 +37,3 @@ To reconstruct the parametrized mesh from `grid_rec` one could do
 ```
 
 VTK mesh files can be open using Paraview (paraview.org) for further inspection.
-
-## Installation
-
-**Stable Release:** `pip install aicsimageprocessing`<br>
-
-***Free software: Allen Institute Software License***
