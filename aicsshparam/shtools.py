@@ -127,7 +127,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
 
     """ Rotate multichannel image in 2D by a given angle. The
         expected shape of image is (C,Z,Y,X). The rotation will
-        be done around the center of the image.
+        be done clock-wise around the center of the image.
 
         Parameters
         ----------
@@ -170,7 +170,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
     return img_aligned
 
 
-def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
+def align_image_2d(image, alignment_channel=None, make_unique=False, preserve_chirality=True):
 
     """ Align a multichannel 3D image based on the channel
         specified by alignment_channel. The expected shape of
@@ -213,20 +213,32 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
 
     xy = np.hstack([x.reshape(-1, 1), y.reshape(-1, 1)])
 
-    eigenvecs = skdecomp.PCA(n_components=2).fit(xy).components_
+    pca = skdecomp.PCA(n_components=2)
+
+    pca = pca.fit(xy)
+
+    eigenvecs = pca.components_
+
+    angle = 180.0 * np.arctan(eigenvecs[0][1]/eigenvecs[0][0]) / np.pi
+
+    '''
 
     angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
 
+    x_rot = (x-x.mean())*np.cos(np.pi*angle/180) + (y-y.mean())*np.sin(np.pi*angle/180)
+
     if preserve_chirality:
         # Check the skewness of the x coordinate
-        xsk = scistats.skew(x)
+        xsk = scistats.skew(xrot)
         if xsk < 0.0:
             angle += 180
-
+    
     # Map all angles to anti-clockwise
     angle = angle % 360
 
-    # Apply skimage rotation
+    '''
+
+    # Apply skimage rotation clock-wise
     img_aligned = rotate_image_2d(image=image, angle=angle)
 
     flip_x = 1
@@ -243,7 +255,6 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
             img_aligned = img_aligned[:, :, ::-1, :]
 
     return img_aligned, (angle, flip_x, flip_y)
-
 
 def apply_image_alignment_2d(image, angle, flip_x, flip_y):
 
