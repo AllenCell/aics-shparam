@@ -170,7 +170,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
     return img_aligned
 
 
-def align_image_2d(image, alignment_channel=None, make_unique=False, preserve_chirality=True):
+def align_image_2d(image, alignment_channel=None, make_unique=False):
 
     """ Align a multichannel 3D image based on the channel
         specified by alignment_channel. The expected shape of
@@ -180,16 +180,17 @@ def align_image_2d(image, alignment_channel=None, make_unique=False, preserve_ch
         ----------
         image : ndarray
             Input array of shape (C,Z,Y,X) or (Z,Y,X).
-        alignment_channel: int
+        alignment_channel : int
             Number of channel to be used as reference for alignemnt. The
             alignment will be propagated to all other channels.
+        make_unique : bool
+            Set true to make sure the alignment rotation is unique.
         Returns
         -------
         img_aligned : ndarray
             Aligned image
-        (angle, flip_x, flip_y) : tuple of floats
-            Angle used for align the shape and the flipping factors.
-            flip_k = -1 indicates that coordinate k was flipped.
+        angle : float
+            Angle used for align the shape.
     """
 
     if image.ndim not in [3, 4]:
@@ -219,44 +220,33 @@ def align_image_2d(image, alignment_channel=None, make_unique=False, preserve_ch
 
     eigenvecs = pca.components_
 
-    angle = 180.0 * np.arctan(eigenvecs[0][1]/eigenvecs[0][0]) / np.pi
+    if make_unique:
+    
+        # Calculate angle with arctan2
+        angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
 
-    '''
+        # Rotate x coordinates
+        x_rot = (x-x.mean())*np.cos(np.pi*angle/180) + (y-y.mean())*np.sin(np.pi*angle/180)
 
-    angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
-
-    x_rot = (x-x.mean())*np.cos(np.pi*angle/180) + (y-y.mean())*np.sin(np.pi*angle/180)
-
-    if preserve_chirality:
-        # Check the skewness of the x coordinate
-        xsk = scistats.skew(xrot)
+        # Check the skewness of the rotated x coordinate
+        xsk = scistats.skew(x_rot)
         if xsk < 0.0:
             angle += 180
     
-    # Map all angles to anti-clockwise
-    angle = angle % 360
-
-    '''
+        # Map all angles to anti-clockwise
+        angle = angle % 360
+        
+    else:
+        
+        # Calculate smallest angle
+        angle = 180.0 * np.arctan(eigenvecs[0][1]/eigenvecs[0][0]) / np.pi
 
     # Apply skimage rotation clock-wise
     img_aligned = rotate_image_2d(image=image, angle=angle)
 
-    flip_x = 1
-    flip_y = 1
-    if not preserve_chirality:
+    return img_aligned, angle
 
-        # Flipping x and y axes to keep correlation positive
-        z, y, x = np.where(img_aligned[alignment_channel])
-        if np.corrcoef(x, z)[0, 1] < 0.0:
-            flip_x = -1
-            img_aligned = img_aligned[:, :, :, ::-1]
-        if np.corrcoef(y, z)[0, 1] < 0.0:
-            flip_y = -1
-            img_aligned = img_aligned[:, :, ::-1, :]
-
-    return img_aligned, (angle, flip_x, flip_y)
-
-def apply_image_alignment_2d(image, angle, flip_x, flip_y):
+def apply_image_alignment_2d(image, angle):
 
     """ Apply an existing set of alignment parameters to a
         multichannel 3D image. The expected shape of
@@ -268,12 +258,6 @@ def apply_image_alignment_2d(image, angle, flip_x, flip_y):
             Input array of shape (C,Z,Y,X) or (Z,Y,X).
         angle : float
             2D rotation angle in degrees
-        flip_x : [1,-1]
-            Whether coordinate x should be flipped (-1) or not  (1)
-            prior rotation
-        flip_y : [1,-1]
-            Whether coordinate y should be flipped (-1) or not  (1)
-            prior rotation
         Returns
         -------
         img_aligned : ndarray
@@ -283,30 +267,10 @@ def apply_image_alignment_2d(image, angle, flip_x, flip_y):
     if image.ndim not in [3, 4]:
         raise ValueError(f"Invalid shape {image.shape} of input image.")
 
-    if not isinstance(flip_x, int):
-        raise ValueError("flip_x must be an integer.")
-
-    if not isinstance(flip_y, int):
-        raise ValueError("flip_y must be an integer.")
-
-    if flip_x not in [-1, 1]:
-        raise ValueError(
-            f"Values accepted for flip_x are -1 or 1. Value provided: {flip_x}."
-        )
-
-    if flip_y not in [-1, 1]:
-        raise ValueError(
-            f"Values accepted for flip_y are -1 or 1. Value provided: {flip_y}."
-        )
-
     if image.ndim == 3:
         image = image.reshape(1, *image.shape)
 
     img_aligned = rotate_image_2d(image=image, angle=angle)
-
-    img_aligned = img_aligned[:, :, :, ::flip_x]
-
-    img_aligned = img_aligned[:, :, ::flip_y, :]
 
     return img_aligned
 
