@@ -8,7 +8,7 @@ from . import shtools
 
 
 def get_shcoeffs(
-    image, lmax, sigma=0, compute_lcc=True, alignment_2d=True, preserve_chirality=True
+    image, lmax, sigma=0, compute_lcc=True, alignment_2d=True, make_unique=False
 ):
 
     """Compute spherical harmonics coefficients that describe an object stored as
@@ -43,11 +43,10 @@ def get_shcoeffs(
         grid_down : ndarray
             Parametric grid representing input object.
         transform : tuple of floats
-            (xc, yc, zc, angle, flip_x, flip_y) if alignment_2d is True or
+            (xc, yc, zc, angle) if alignment_2d is True or
             (xc, yc, zc) if alignment_2d is False. (xc, yc, zc) are the coordinates
             of the shape centroid after alignment; angle is the angle used to align
-            the image; and the flipping of x and y coordinates. flip_k = -1 indicates
-            coordinate k was flipped.
+            the image
 
         Other parameters
         ----------------
@@ -62,9 +61,9 @@ def get_shcoeffs(
             connected component object.
         alignment_2d : bool
             Wheather the image should be aligned in 2d. Default is True.
-        preserve_chirality : bool
-            Mirrored shapes would have different coefficients if chirality is
-            preserved.
+        make_unique : bool
+            Set true to make sure the alignment rotation is unique.
+            
         Notes
         -----
         Alignment mode '2d' allows for keeping the z axis unchanged which might be
@@ -104,12 +103,11 @@ def get_shcoeffs(
     image_[image_ > 0] = 1
 
     # Alignment
-    transform = None
     if alignment_2d:
         # Align the points such that the longest axis of the 2d
         # xy max projected shape will be horizontal (along x)
-        image_, transform = shtools.align_image_2d(
-            image=image_, preserve_chirality=preserve_chirality
+        image_, angle = shtools.align_image_2d(
+            image=image_, make_unique=make_unique
         )
         image_ = image_.squeeze()
 
@@ -118,14 +116,14 @@ def get_shcoeffs(
 
     if not image_[tuple([int(u) for u in centroid[::-1]])]:
         print('Warning: Centroid seems to fall off the object...')
-
+        
     # Get coordinates of mesh points
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
     x = coords[:, 0]
     y = coords[:, 1]
     z = coords[:, 2]
-
-    transform = centroid + (transform if transform is not None else ())
+    
+    transform = centroid + ((angle,) if alignment_2d else ())
 
     # Translate and update mesh normals
     mesh = shtools.update_mesh_points(mesh, x, y, z)

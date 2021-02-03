@@ -127,7 +127,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
 
     """ Rotate multichannel image in 2D by a given angle. The
         expected shape of image is (C,Z,Y,X). The rotation will
-        be done around the center of the image.
+        be done clock-wise around the center of the image.
 
         Parameters
         ----------
@@ -170,7 +170,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
     return img_aligned
 
 
-def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
+def align_image_2d(image, alignment_channel=None, make_unique=False):
 
     """ Align a multichannel 3D image based on the channel
         specified by alignment_channel. The expected shape of
@@ -180,16 +180,17 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
         ----------
         image : ndarray
             Input array of shape (C,Z,Y,X) or (Z,Y,X).
-        alignment_channel: int
+        alignment_channel : int
             Number of channel to be used as reference for alignemnt. The
             alignment will be propagated to all other channels.
+        make_unique : bool
+            Set true to make sure the alignment rotation is unique.
         Returns
         -------
         img_aligned : ndarray
             Aligned image
-        (angle, flip_x, flip_y) : tuple of floats
-            Angle used for align the shape and the flipping factors.
-            flip_k = -1 indicates that coordinate k was flipped.
+        angle : float
+            Angle used for align the shape.
     """
 
     if image.ndim not in [3, 4]:
@@ -213,39 +214,39 @@ def align_image_2d(image, alignment_channel=None, preserve_chirality=True):
 
     xy = np.hstack([x.reshape(-1, 1), y.reshape(-1, 1)])
 
-    eigenvecs = skdecomp.PCA(n_components=2).fit(xy).components_
+    pca = skdecomp.PCA(n_components=2)
 
-    angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
+    pca = pca.fit(xy)
 
-    if preserve_chirality:
-        # Check the skewness of the x coordinate
-        xsk = scistats.skew(x)
+    eigenvecs = pca.components_
+
+    if make_unique:
+    
+        # Calculate angle with arctan2
+        angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
+
+        # Rotate x coordinates
+        x_rot = (x-x.mean())*np.cos(np.pi*angle/180) + (y-y.mean())*np.sin(np.pi*angle/180)
+
+        # Check the skewness of the rotated x coordinate
+        xsk = scistats.skew(x_rot)
         if xsk < 0.0:
             angle += 180
+    
+        # Map all angles to anti-clockwise
+        angle = angle % 360
+        
+    else:
+        
+        # Calculate smallest angle
+        angle = 180.0 * np.arctan(eigenvecs[0][1]/eigenvecs[0][0]) / np.pi
 
-    # Map all angles to anti-clockwise
-    angle = angle % 360
-
-    # Apply skimage rotation
+    # Apply skimage rotation clock-wise
     img_aligned = rotate_image_2d(image=image, angle=angle)
 
-    flip_x = 1
-    flip_y = 1
-    if not preserve_chirality:
+    return img_aligned, angle
 
-        # Flipping x and y axes to keep correlation positive
-        z, y, x = np.where(img_aligned[alignment_channel])
-        if np.corrcoef(x, z)[0, 1] < 0.0:
-            flip_x = -1
-            img_aligned = img_aligned[:, :, :, ::-1]
-        if np.corrcoef(y, z)[0, 1] < 0.0:
-            flip_y = -1
-            img_aligned = img_aligned[:, :, ::-1, :]
-
-    return img_aligned, (angle, flip_x, flip_y)
-
-
-def apply_image_alignment_2d(image, angle, flip_x, flip_y):
+def apply_image_alignment_2d(image, angle):
 
     """ Apply an existing set of alignment parameters to a
         multichannel 3D image. The expected shape of
@@ -257,12 +258,6 @@ def apply_image_alignment_2d(image, angle, flip_x, flip_y):
             Input array of shape (C,Z,Y,X) or (Z,Y,X).
         angle : float
             2D rotation angle in degrees
-        flip_x : [1,-1]
-            Whether coordinate x should be flipped (-1) or not  (1)
-            prior rotation
-        flip_y : [1,-1]
-            Whether coordinate y should be flipped (-1) or not  (1)
-            prior rotation
         Returns
         -------
         img_aligned : ndarray
@@ -272,30 +267,10 @@ def apply_image_alignment_2d(image, angle, flip_x, flip_y):
     if image.ndim not in [3, 4]:
         raise ValueError(f"Invalid shape {image.shape} of input image.")
 
-    if not isinstance(flip_x, int):
-        raise ValueError("flip_x must be an integer.")
-
-    if not isinstance(flip_y, int):
-        raise ValueError("flip_y must be an integer.")
-
-    if flip_x not in [-1, 1]:
-        raise ValueError(
-            f"Values accepted for flip_x are -1 or 1. Value provided: {flip_x}."
-        )
-
-    if flip_y not in [-1, 1]:
-        raise ValueError(
-            f"Values accepted for flip_y are -1 or 1. Value provided: {flip_y}."
-        )
-
     if image.ndim == 3:
         image = image.reshape(1, *image.shape)
 
     img_aligned = rotate_image_2d(image=image, angle=angle)
-
-    img_aligned = img_aligned[:, :, :, ::flip_x]
-
-    img_aligned = img_aligned[:, :, ::flip_y, :]
 
     return img_aligned
 
@@ -501,7 +476,7 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
 
     res_lat = grid.shape[0]
     res_lon = grid.shape[1]
-
+    
     # Creates an initial spherical mesh with right dimensions.
     rec = vtk.vtkSphereSource()
     rec.SetPhiResolution(res_lat + 2)
@@ -510,12 +485,10 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
     rec = rec.GetOutput()
 
     grid_ = grid.T.flatten()
-
+    
     # Update the points coordinates of the spherical mesh according to the inout grid
     for j, lon in enumerate(np.linspace(0, 2 * np.pi, num=res_lon, endpoint=False)):
-        for i, lat in enumerate(
-            np.linspace(np.pi / (res_lat + 1), np.pi, num=res_lat, endpoint=False)
-        ):
+        for i, lat in enumerate(np.linspace(np.pi / (res_lat + 1), np.pi, num=res_lat, endpoint=False)):
             theta = lat
             phi = lon - np.pi
             k = j * res_lat + i
@@ -528,10 +501,13 @@ def get_reconstruction_from_grid(grid, centroid=(0, 0, 0)):
     south = grid_[(res_lat-1)::res_lat].mean()
     rec.GetPoints().SetPoint(0, centroid[0] + 0, centroid[1] + 0, centroid[2] + north)
     rec.GetPoints().SetPoint(1, centroid[0] + 0, centroid[1] + 0, centroid[2] - south)
-
+    
     # Compute normal vectors
     normals = vtk.vtkPolyDataNormals()
     normals.SetInputData(rec)
+    # Set splitting off to avoid output mesh from having different number of
+    # points compared to input
+    normals.SplittingOff()
     normals.Update()
 
     mesh = normals.GetOutput()
@@ -561,9 +537,11 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
         Other parameters
         ----------------
         lrec : int, optional
-            Only coefficients l<lrec will be used for creating the
-            mesh, default is 0 meaning all coefficients available
-            in the matrix coefficients will be used.
+            Degree of the reconstruction. If lrec<l, then only
+            coefficients l<lrec will be used for creating the mesh.
+            If lrec>l, then the mesh will be oversampled.
+            Default is 0 meaning all coefficients
+            available in the matrix coefficients will be used.
 
         Notes
         -----
@@ -571,13 +549,26 @@ def get_reconstruction_from_coeffs(coeffs, lrec=0):
             matrix and therefore not affected by lrec.
     """
 
-    coeffs_ = coeffs.copy()
+    # Degree of the expansion
+    lmax = coeffs.shape[1]
+    
+    if (lrec == 0):
+        lrec = lmax
+        
+    # Create array (oversampled if lrec>lrec)
+    coeffs_ = np.zeros((2,lrec,lrec), dtype=np.float32)
+    
+    # Adjust lrec to the expansion degree
+    if lrec > lmax:
+        lrec = lmax
 
-    if (lrec > 0) and (lrec < coeffs_.shape[1]):
-        coeffs_[:, lrec:, :] = 0
+    # Copy coefficients
+    coeffs_[:, :lrec, :lrec] = coeffs[:,:lrec,:lrec]
 
+    # Expand into a grid
     grid = pyshtools.expand.MakeGridDH(coeffs_, sampling=2)
 
+    # Get mesh
     mesh = get_reconstruction_from_grid(grid)
 
     return mesh, grid
