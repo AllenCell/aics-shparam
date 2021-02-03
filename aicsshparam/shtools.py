@@ -142,7 +142,7 @@ def rotate_image_2d(image, angle, interpolation_order=0):
     """
 
     if image.ndim != 4:
-        raise ValueError(f"Invalid shape {image.shape} of input image.")
+        raise ValueError(f"Invalid shape {image.shape} of input image. Expected 4 dimensional images as input.")
 
     if not isinstance(interpolation_order, int):
         raise ValueError("Only integer values are accepted for interpolation order.")

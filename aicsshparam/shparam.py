@@ -1,3 +1,4 @@
+import warnings
 import pyshtools
 import numpy as np
 from vtk.util import numpy_support
@@ -77,7 +78,7 @@ def get_shcoeffs(
         >>> img = np.ones((32,32,32), dtype=np.uint8)
         >>>
         >>> (coeffs, grid_rec), (image_, mesh, grid, transform) = shparam.get_shcoeffs(image=img, lmax=2)
-        >>> mse = shtools.get_reconstruction_error(grid,grid_rec)
+        >>> mse = shtools.get_reconstruction_error(grid, grid_rec)
         >>>
         >>> print('Coefficients:', coeffs)
         >>> print('Error:', mse)
@@ -92,7 +93,7 @@ def get_shcoeffs(
     """
 
     if len(image.shape) != 3:
-        raise ValueError("Incorrect dimensions: {}".format(image.shape))
+        raise ValueError("Incorrect dimensions: {}. Expected 3 dimensions.".format(image.shape))
 
     if image.sum() == 0:
         raise ValueError("No foreground voxels found. Is the input image empty?")
@@ -115,7 +116,7 @@ def get_shcoeffs(
     mesh, image_, centroid = shtools.get_mesh_from_image(image=image_, sigma=sigma)
 
     if not image_[tuple([int(u) for u in centroid[::-1]])]:
-        print('Warning: Centroid seems to fall off the object...')
+        warnings.warn("Mesh centroid seems to fall outside the object. This indicates the mesh may not be a manifold suitable for spherical harmonics parameterization.")
         
     # Get coordinates of mesh points
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
