@@ -9,7 +9,12 @@ from . import shtools
 
 
 def get_shcoeffs(
-    image, lmax, sigma=0, compute_lcc=True, alignment_2d=True, make_unique=False
+    image: np.array,
+    lmax: int,
+    sigma: float = 0,
+    compute_lcc: bool = True,
+    alignment_2d: bool = True,
+    make_unique: bool = False,
 ):
 
     """Compute spherical harmonics coefficients that describe an object stored as
@@ -64,7 +69,7 @@ def get_shcoeffs(
             Wheather the image should be aligned in 2d. Default is True.
         make_unique : bool
             Set true to make sure the alignment rotation is unique.
-            
+
         Notes
         -----
         Alignment mode '2d' allows for keeping the z axis unchanged which might be
@@ -72,28 +77,30 @@ def get_shcoeffs(
 
         Examples
         --------
-        >>> import numpy as np
-        >>> from aicsshparam import shparam, shtools
-        >>>
-        >>> img = np.ones((32,32,32), dtype=np.uint8)
-        >>>
-        >>> (coeffs, grid_rec), (image_, mesh, grid, transform) = shparam.get_shcoeffs(image=img, lmax=2)
-        >>> mse = shtools.get_reconstruction_error(grid, grid_rec)
-        >>>
-        >>> print('Coefficients:', coeffs)
-        >>> print('Error:', mse)
-        Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0, 'shcoeffs_L0M2C':
+            import numpy as np
+            from aicsshparam import shparam, shtools
+
+            img = np.ones((32,32,32), dtype=np.uint8)
+
+            (coeffs, grid_rec), (image_, mesh, grid, transform) = shparam.get_shcoeffs(image=img, lmax=2)
+            mse = shtools.get_reconstruction_error(grid, grid_rec)
+
+            print('Coefficients:', coeffs)
+        >>> Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0, 'shcoeffs_L0M2C':
         0.0, 'shcoeffs_L1M0C': 0.020438775421611564, 'shcoeffs_L1M1C': -0.0030960466571801513,
         'shcoeffs_L1M2C': 0.0, 'shcoeffs_L2M0C': -0.0185688727281408, 'shcoeffs_L2M1C':
         -2.9925077712704384e-05, 'shcoeffs_L2M2C': -0.009087503958673892, 'shcoeffs_L0M0S': 0.0,
         'shcoeffs_L0M1S': 0.0, 'shcoeffs_L0M2S': 0.0, 'shcoeffs_L1M0S': 0.0, 'shcoeffs_L1M1S':
         3.799611612562637e-05, 'shcoeffs_L1M2S': 0.0, 'shcoeffs_L2M0S': 0.0, 'shcoeffs_L2M1S':
         3.672543904347801e-07, 'shcoeffs_L2M2S': 0.0002230857005948496}
-        Error: 2.3738182456948795
+            print('Error:', mse)
+        >>> Error: 2.3738182456948795
     """
 
     if len(image.shape) != 3:
-        raise ValueError("Incorrect dimensions: {}. Expected 3 dimensions.".format(image.shape))
+        raise ValueError(
+            "Incorrect dimensions: {}. Expected 3 dimensions.".format(image.shape)
+        )
 
     if image.sum() == 0:
         raise ValueError("No foreground voxels found. Is the input image empty?")
@@ -107,23 +114,25 @@ def get_shcoeffs(
     if alignment_2d:
         # Align the points such that the longest axis of the 2d
         # xy max projected shape will be horizontal (along x)
-        image_, angle = shtools.align_image_2d(
-            image=image_, make_unique=make_unique
-        )
+        image_, angle = shtools.align_image_2d(image=image_, make_unique=make_unique)
         image_ = image_.squeeze()
 
     # Converting the input image into a mesh using regular marching cubes
     mesh, image_, centroid = shtools.get_mesh_from_image(image=image_, sigma=sigma)
 
     if not image_[tuple([int(u) for u in centroid[::-1]])]:
-        warnings.warn("Mesh centroid seems to fall outside the object. This indicates the mesh may not be a manifold suitable for spherical harmonics parameterization.")
-        
+        warnings.warn(
+            "Mesh centroid seems to fall outside the object. This indicates\
+        the mesh may not be a manifold suitable for spherical harmonics\
+        parameterization."
+        )
+
     # Get coordinates of mesh points
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
     x = coords[:, 0]
     y = coords[:, 1]
     z = coords[:, 2]
-    
+
     transform = centroid + ((angle,) if alignment_2d else ())
 
     # Translate and update mesh normals
