@@ -1,130 +1,89 @@
-from setuptools import setup, find_packages
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
+"""The setup script."""
 
-#######################################################################################################################
-from wheel.bdist_wheel import bdist_wheel
+from setuptools import find_packages, setup
 
+with open("README.md") as readme_file:
+    readme = readme_file.read()
 
-class BDistWheelBranch(bdist_wheel):
-    """
-    This class extends bdist_wheel to allow generating feature specific artifacts.
-
-    E.g. if the branch is feature/some-new-idea, then the command line
-    > python setup.py bdist_wheel --feature-name=feature/some-new-idea
-    will generate
-        ./dist/aicsshparam-<version>.dev<#>.feature_some_new_idea-<python-versions>-<arch>.whl
-
-    Note that this will work with whatever string is provided. The associated Jenkinsfile
-    will provide the feature branch name
-    """
-
-    user_options = bdist_wheel.user_options + [("branch-name=", None, "The branch name, e.g. feature/x-y-z, bugfix/a-b-c")]
-
-    def initialize_options(self):
-        super().initialize_options()
-        self.branch_name: str = None
-
-    def finalize_options(self):
-        if self.branch_name:
-            for s in ['-', '.', '/']:
-                self.branch_name = self.branch_name.replace(s, '_')
-            print(f"Using feature name = {self.branch_name}")
-            # NOTE: monkey patching bdist_wheel.distribution.get_version()
-            self.original_version = self.distribution.get_version()
-            self.distribution.get_version = self.get_version_with_feature
-        super().finalize_options()
-
-    def get_version_with_feature(self):
-        return f"{self.original_version}.{self.branch_name}"
-
-
-#######################################################################################################################
-
-
-"""
-Notes:
-MODULE_VERSION is read from aicsshparam/version.py.
-See (3) in following link to read about versions from a single source
-https://packaging.python.org/guides/single-sourcing-package-version/#single-sourcing-the-version
-"""
-MODULE_VERSION = ""
-PACKAGE_NAME = 'aicsshparam'
-exec(open(PACKAGE_NAME + "/version.py").read())
-
-
-def readme():
-    with open('README.md') as f:
-        return f.read()
-
-
-test_deps = ['pytest', 'pytest-cov', 'pytest-raises', 'pytest-runner']
-
-lint_deps = ['flake8']
-
-interactive_dev_deps = [
-    # -- Add libraries/modules you want to use for interactive
-    # -- testing below (e.g. jupyter notebook).
-    # -- E.g.
-    # 'matplotlib>=2.2.3',
-    # 'jupyter',
-    # 'itkwidgets==0.12.2',
-    # 'ipython==7.0.1',
-    # 'ipywidgets==7.4.1'
+setup_requirements = [
+    "pytest-runner>=5.2",
 ]
 
-other_deps = [
-  'numpy>=1.18.1',
-  'scipy>=1.4.1',
-  'scikit-image>=0.16.2',
-  'scikit-learn>=0.22.1',
-  'vtk>=9.0.0',
-  'pyshtools>=4.5'    
+test_requirements = [
+    "black>=19.10b0",
+    "codecov>=2.1.4",
+    "flake8>=3.8.3",
+    "flake8-debugger>=3.2.1",
+    "pytest>=5.4.3",
+    "pytest-cov>=2.9.0",
+    "pytest-raises>=0.11",
 ]
 
-all_deps = [*test_deps, *lint_deps, *interactive_dev_deps, *other_deps]
+dev_requirements = [
+    *setup_requirements,
+    *test_requirements,
+    "bump2version>=1.0.1",
+    "coverage>=5.1",
+    "ipython>=7.15.0",
+    "m2r2>=0.2.7",
+    "pytest-runner>=5.2",
+    "Sphinx>=3.4.3",
+    "sphinx_rtd_theme>=0.5.1",
+    "tox>=3.15.2",
+    "twine>=3.1.1",
+    "wheel>=0.34.2",
+]
 
-extras = {
-    'test': test_deps,
-    'lint': lint_deps,
-    'interactive_dev': interactive_dev_deps,
-    # These are for legacy compatibility with the gradle build setup
-    'test_group': test_deps,
-    'lint_group': lint_deps,
-    'interactive_dev_group': interactive_dev_deps,
-    'all': all_deps
+requirements = [
+    'numpy>=1.18.1',
+    'scipy>=1.4.1',
+    'scikit-image>=0.16.2',
+    'scikit-learn>=0.22.1',
+    'vtk>=9.0.0',
+    'pyshtools>=4.5'
+]
+
+extra_requirements = {
+    "setup": setup_requirements,
+    "test": test_requirements,
+    "dev": dev_requirements,
+    "all": [
+        *requirements,
+        *dev_requirements,
+    ]
 }
 
-setup(cmdclass={'bdist_wheel': BDistWheelBranch},
-      name=PACKAGE_NAME,
-      version=MODULE_VERSION,
-      description='Spherical Harmonics Parametrization',
-      long_description=readme(),
-      author='Matheus Viana',
-      author_email='matheus.viana@alleninstitute.org',
-      license='Allen Institute Software License',
-      packages=find_packages(exclude=['tests', '*.tests', '*.tests.*']),
-      entry_points={
-          "console_scripts": [
-              "my_example={}.bin.my_example:main".format(PACKAGE_NAME)
-          ]
-      },
-      install_requires=[
-          'numpy>=1.18.1',
-          'scipy>=1.4.1',
-          'scikit-image>=0.16.2',
-          'scikit-learn>=0.22.1',
-          'vtk>=9.0.0',
-          'pyshtools>=4.5'
-          # List of modules required to use/run this module.
-          # -- E.g.
-          # 'numpy>=1.15.1',
-          # 'requests'
-      ],
-
-      # For test setup. This will allow JUnit XML output for Jenkins
-      setup_requires=[],
-      tests_require=test_deps,
-
-      extras_require=extras,
-      zip_safe=False
-      )
+setup(
+    author="Matheus Viana",
+    author_email="matheus.viana@alleninstitute.org",
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "License :: Free for non-commercial use",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+    ],
+    description="Spherical harmonics parametrization for 3D starlike shapes",
+    install_requires=requirements,
+    license="Allen Institute Software License",
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    include_package_data=True,
+    keywords="aicsshparam",
+    name="aicsshparam",
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
+    python_requires=">=3.7",
+    setup_requires=setup_requirements,
+    test_suite="aicsshparam/tests",
+    tests_require=test_requirements,
+    extras_require=extra_requirements,
+    url="https://github.com/AllenCell/aics-shparam",
+    # Do not edit this string manually, always use bumpversion
+    # Details in CONTRIBUTING.rst
+    version="0.0.14",
+    zip_safe=False,
+)
