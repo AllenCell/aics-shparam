@@ -82,17 +82,20 @@ def get_shcoeffs(
 
             img = np.ones((32,32,32), dtype=np.uint8)
 
-            (coeffs, grid_rec), (image_, mesh, grid, transform) = shparam.get_shcoeffs(image=img, lmax=2)
+            (coeffs, grid_rec), (image_, mesh, grid, transform) = 
+                shparam.get_shcoeffs(image=img, lmax=2)
             mse = shtools.get_reconstruction_error(grid, grid_rec)
 
             print('Coefficients:', coeffs)
-        >>> Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0, 'shcoeffs_L0M2C':
-        0.0, 'shcoeffs_L1M0C': 0.020438775421611564, 'shcoeffs_L1M1C': -0.0030960466571801513,
-        'shcoeffs_L1M2C': 0.0, 'shcoeffs_L2M0C': -0.0185688727281408, 'shcoeffs_L2M1C':
-        -2.9925077712704384e-05, 'shcoeffs_L2M2C': -0.009087503958673892, 'shcoeffs_L0M0S': 0.0,
-        'shcoeffs_L0M1S': 0.0, 'shcoeffs_L0M2S': 0.0, 'shcoeffs_L1M0S': 0.0, 'shcoeffs_L1M1S':
-        3.799611612562637e-05, 'shcoeffs_L1M2S': 0.0, 'shcoeffs_L2M0S': 0.0, 'shcoeffs_L2M1S':
-        3.672543904347801e-07, 'shcoeffs_L2M2S': 0.0002230857005948496}
+        >>> Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0,
+        'shcoeffs_L0M2C': 0.0, 'shcoeffs_L1M0C': 0.020438775421611564, 'shcoeffs_L1M1C': 
+        -0.0030960466571801513, 'shcoeffs_L1M2C': 0.0, 'shcoeffs_L2M0C':
+        -0.0185688727281408, 'shcoeffs_L2M1C': -2.9925077712704384e-05,
+        'shcoeffs_L2M2C': -0.009087503958673892, 'shcoeffs_L0M0S': 0.0,
+        'shcoeffs_L0M1S': 0.0, 'shcoeffs_L0M2S': 0.0, 'shcoeffs_L1M0S': 0.0,
+        'shcoeffs_L1M1S': 3.799611612562637e-05, 'shcoeffs_L1M2S': 0.0,
+        'shcoeffs_L2M0S': 0.0, 'shcoeffs_L2M1S': 3.672543904347801e-07,
+        'shcoeffs_L2M2S': 0.0002230857005948496}
             print('Error:', mse)
         >>> Error: 2.3738182456948795
     """
