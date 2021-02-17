@@ -99,7 +99,8 @@ def get_mesh_from_image(
 
     if img.sum() == 0:
         raise ValueError(
-            "No foreground voxels found after pre-processing. Is the object of interest centered?"
+            "No foreground voxels found after pre-processing."
+            "Is the object of interest centered?"
         )
 
     # Create vtkImageData
@@ -152,7 +153,8 @@ def rotate_image_2d(image: np.array, angle: float, interpolation_order: int = 0)
 
     if image.ndim != 4:
         raise ValueError(
-            f"Invalid shape {image.shape} of input image. Expected 4 dimensional images as input."
+            f"Invalid shape {image.shape} of input image."
+            "Expected 4 dimensional images as input."
         )
 
     if not isinstance(interpolation_order, int):
