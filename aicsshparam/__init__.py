@@ -1,9 +1,13 @@
-from .version import MODULE_VERSION
+# -*- coding: utf-8 -*-
 
-# from .shparam import get_shcoeffs
+"""Top-level package for aics-shparam."""
 
-__version__ = MODULE_VERSION
+__author__ = "Matheus Viana"
+__email__ = "matheus.viana@alleninstitute.org"
+# Do not edit this string manually, always use bumpversion
+# Details in CONTRIBUTING.md
+__version__ = "0.0.14"
 
 
 def get_module_version():
-    return MODULE_VERSION
+    return __version__
