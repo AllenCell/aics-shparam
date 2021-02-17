@@ -42,7 +42,7 @@ requirements = [
     'scipy>=1.4.1',
     'scikit-image>=0.16.2',
     'scikit-learn>=0.22.1',
-    'vtk>=9.0.0',
+    'vtk==9.0.1',
     'pyshtools>=4.5'
 ]
 
