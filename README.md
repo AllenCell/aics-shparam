@@ -1,5 +1,8 @@
 # AICS Spherical Hamonics Parametrization
 
+[![Build Status](https://github.com/AllenCell/aics-shparam/workflows/Build%20Main/badge.svg)](https://github.com/AllenCell/aics-shparam/actions)
+[![Documentation](https://github.com/AllenCell/aics-shparam/workflows/Documentation/badge.svg)](https://AllenCell.github.io/aics-shparam/)
+
 ### Spherical harmonics parametrization for 3D starlike shapes. 
 
 ![Parameterization of cell and nuclear shape](docs/logo.gif)
