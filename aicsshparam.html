@@ -1,0 +1,644 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>aicsshparam package &mdash; aics-shparam 0.0.14 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="aicsshparam.bin package" href="aicsshparam.bin.html" />
+    <link rel="prev" title="aicsshparam" href="modules.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> aics-shparam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.14
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#stable-release">Stable release</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#from-sources">From sources</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Package modules</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">aicsshparam package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="aicsshparam.bin.html">aicsshparam.bin package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsshparam.shparam">aicsshparam.shparam module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsshparam.shtools">aicsshparam.shtools module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-aicsshparam">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#get-started">Get Started!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#deploying">Deploying</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">aics-shparam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="modules.html">aicsshparam</a> &raquo;</li>
+        
+      <li>aicsshparam package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/aicsshparam.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="aicsshparam.bin.html" class="btn btn-neutral float-right" title="aicsshparam.bin package" accesskey="n">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+      
+      
+        <a href="modules.html" class="btn btn-neutral float-left" title="aicsshparam" accesskey="p"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="aicsshparam-package">
+<h1>aicsshparam package<a class="headerlink" href="#aicsshparam-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="aicsshparam.bin.html">aicsshparam.bin package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="aicsshparam.bin.html#module-aicsshparam.bin">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-aicsshparam.shparam">
+<span id="aicsshparam-shparam-module"></span><h2>aicsshparam.shparam module<a class="headerlink" href="#module-aicsshparam.shparam" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="aicsshparam.shparam.get_shcoeffs">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shparam.</span></code><code class="sig-name descname"><span class="pre">get_shcoeffs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compute_lcc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment_2d</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_unique</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shparam.html#get_shcoeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shparam.get_shcoeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute spherical harmonics coefficients that describe an object stored as
+an image.</p>
+<blockquote>
+<div><p>Calculates the spherical harmonics coefficients that parametrize the shape
+formed by the foreground set of voxels in the input image. The input image
+does not need to be binary and all foreground voxels (background=0) are used
+in the computation. Foreground voxels must form a single connected component.
+If you are sure that this is the case for the input image, you can set
+compute_lcc to False to speed up the calculation. In addition, the shape is
+expected to be centered in the input image.</p>
+<dl class="simple">
+<dt>image<span class="classifier">ndarray</span></dt><dd><p>Input image. Expected to have shape ZYX.</p>
+</dd>
+<dt>lmax<span class="classifier">int</span></dt><dd><p>Order of the spherical harmonics parametrization. The higher the order
+the more shape details are represented.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>coeffs_dict<span class="classifier">dict</span></dt><dd><p>Dictionary with the spherical harmonics coefficients and the mean square
+error between input and its parametrization</p>
+</dd>
+<dt>grid_rec<span class="classifier">ndarray</span></dt><dd><p>Parametric grid representing sh parametrization</p>
+</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">image_</span></a><span class="classifier">ndarray</span></dt><dd><p>Input image after pre-processing (lcc calculation, smooth and binarization).</p>
+</dd>
+<dt>mesh<span class="classifier">vtkPolyData</span></dt><dd><p>Polydata representation of <a href="#id3"><span class="problematic" id="id4">image_</span></a>.</p>
+</dd>
+<dt>grid_down<span class="classifier">ndarray</span></dt><dd><p>Parametric grid representing input object.</p>
+</dd>
+<dt>transform<span class="classifier">tuple of floats</span></dt><dd><p>(xc, yc, zc, angle) if alignment_2d is True or
+(xc, yc, zc) if alignment_2d is False. (xc, yc, zc) are the coordinates
+of the shape centroid after alignment; angle is the angle used to align
+the image</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>sigma<span class="classifier">float, optional</span></dt><dd><p>The degree of smooth to be applied to the input image, default is 0 (no
+smooth)</p>
+</dd>
+<dt>compute_lcc<span class="classifier">bool, optional</span></dt><dd><p>Whether to compute the largest connected component before appliying the
+spherical harmonic parametrization, default is True. Set compute_lcc to
+False in case you are sure the input image contains a single connected
+component. It is crucial that parametrization is calculated on a single
+connected component object.</p>
+</dd>
+<dt>alignment_2d<span class="classifier">bool</span></dt><dd><p>Wheather the image should be aligned in 2d. Default is True.</p>
+</dd>
+<dt>make_unique<span class="classifier">bool</span></dt><dd><p>Set true to make sure the alignment rotation is unique.</p>
+</dd>
+</dl>
+<p>Alignment mode ‘2d’ allows for keeping the z axis unchanged which might be
+important for some applications.</p>
+<blockquote>
+<div><p>import numpy as np
+from aicsshparam import shparam, shtools</p>
+<p>img = np.ones((32,32,32), dtype=np.uint8)</p>
+<dl class="simple">
+<dt>(coeffs, grid_rec), (<a href="#id5"><span class="problematic" id="id6">image_</span></a>, mesh, grid, transform) =</dt><dd><p>shparam.get_shcoeffs(image=img, lmax=2)</p>
+</dd>
+</dl>
+<p>mse = shtools.get_reconstruction_error(grid, grid_rec)</p>
+<p>print(‘Coefficients:’, coeffs)</p>
+</div></blockquote>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Coefficients</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;shcoeffs_L0M0C&#39;</span><span class="p">:</span> <span class="mf">18.31594310878251</span><span class="p">,</span> <span class="s1">&#39;shcoeffs_L0M1C&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="go">&#39;shcoeffs_L0M2C&#39;: 0.0, &#39;shcoeffs_L1M0C&#39;: 0.020438775421611564, &#39;shcoeffs_L1M1C&#39;:</span>
+<span class="go">-0.0030960466571801513, &#39;shcoeffs_L1M2C&#39;: 0.0, &#39;shcoeffs_L2M0C&#39;:</span>
+<span class="go">-0.0185688727281408, &#39;shcoeffs_L2M1C&#39;: -2.9925077712704384e-05,</span>
+<span class="go">&#39;shcoeffs_L2M2C&#39;: -0.009087503958673892, &#39;shcoeffs_L0M0S&#39;: 0.0,</span>
+<span class="go">&#39;shcoeffs_L0M1S&#39;: 0.0, &#39;shcoeffs_L0M2S&#39;: 0.0, &#39;shcoeffs_L1M0S&#39;: 0.0,</span>
+<span class="go">&#39;shcoeffs_L1M1S&#39;: 3.799611612562637e-05, &#39;shcoeffs_L1M2S&#39;: 0.0,</span>
+<span class="go">&#39;shcoeffs_L2M0S&#39;: 0.0, &#39;shcoeffs_L2M1S&#39;: 3.672543904347801e-07,</span>
+<span class="go">&#39;shcoeffs_L2M2S&#39;: 0.0002230857005948496}</span>
+<span class="go">    print(&#39;Error:&#39;, mse)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Error</span><span class="p">:</span> <span class="mf">2.3738182456948795</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsshparam.shtools">
+<span id="aicsshparam-shtools-module"></span><h2>aicsshparam.shtools module<a class="headerlink" href="#module-aicsshparam.shtools" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="aicsshparam.shtools.align_image_2d">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">align_image_2d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alignment_channel</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">make_unique</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#align_image_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.align_image_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Align a multichannel 3D image based on the channel
+specified by alignment_channel. The expected shape of
+image is (C,Z,Y,X) or (Z,Y,X).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>np.array</em>) – Input array of shape (C,Z,Y,X) or (Z,Y,X).</p></li>
+<li><p><strong>alignment_channel</strong> (<em>int</em>) – Number of channel to be used as reference for alignemnt. The
+alignment will be propagated to all other channels.</p></li>
+<li><p><strong>make_unique</strong> (<em>bool</em>) – Set true to make sure the alignment rotation is unique.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>img_aligned</strong> (<em>np.array</em>) – Aligned image</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – Angle used for align the shape.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.apply_image_alignment_2d">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">apply_image_alignment_2d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#apply_image_alignment_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.apply_image_alignment_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply an existing set of alignment parameters to a
+multichannel 3D image. The expected shape of
+image is (C,Z,Y,X) or (Z,Y,X).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>np.array</em>) – Input array of shape (C,Z,Y,X) or (Z,Y,X).</p></li>
+<li><p><strong>angle</strong> (<em>float</em>) – 2D rotation angle in degrees</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>img_aligned</strong> – Aligned image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_even_reconstruction_from_coeffs">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_even_reconstruction_from_coeffs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_even_reconstruction_from_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_even_reconstruction_from_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a set of spherical harmonic coefficients into
+a 3d mesh using the Fibonacci grid for generating a mesh
+with a more even distribution of points</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>coeffs</strong> (<em>np.array</em>) – Input array of spherical harmonic coefficients. These
+array has dimensions 2xLxM, where the first dimension
+is 0 for cosine-associated coefficients and 1 for
+sine-associated coefficients. Second and thrid dimensions
+represent the expansion parameters (l,m).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mesh</strong> – Mesh that represents the input parametric grid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vtkPolyData</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>lrec</strong> (<em>int, optional</em>) – Only coefficients l&lt;lrec will be used for creating the
+mesh, default is 0 meaning all coefficients available
+in the matrix coefficients will be used.</p></li>
+<li><p><strong>npoints</strong> (<em>int optional</em>) – Number of points in the initial spherical mesh</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The mesh resolution is set by the size of the coefficients
+matrix and therefore not affected by lrec.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_even_reconstruction_from_grid">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_even_reconstruction_from_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">512</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_even_reconstruction_from_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_even_reconstruction_from_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a parametric 2D grid of type (lon,lat,rad) into
+a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses
+a spherical mesh with an even distribution of points. The
+even distribution is obtained via the Fibonacci grid rule.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid</strong> (<em>np.array</em>) – Input grid where the element grid[i,j] represents the
+radial coordinate at longitude i*2pi/grid.shape[0] and
+latitude j*pi/grid.shape[1].</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mesh</strong> – Mesh that represents the input parametric grid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vtkPolyData</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>npoints</strong> (<em>int</em>) – Number of points in the initial spherical mesh</p></li>
+<li><p><strong>centroid</strong> (<em>tuple of floats, optional</em>) – x, y and z coordinates of the centroid where the mesh
+will be translated to, default is (0,0,0).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_mesh_from_image">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_mesh_from_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lcc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">translate_to_origin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_mesh_from_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_mesh_from_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a numpy array into a vtkImageData and then into a 3d mesh
+using vtkContourFilter. The input is assumed to be binary and the
+isosurface value is set to 0.5.</p>
+<p>Optionally the input can be pre-processed by i) extracting the largest
+connected component and ii) applying a gaussian smooth to it. In case
+smooth is used, the image is binarize using thershold 1/e.</p>
+<p>A size threshold is applying to garantee that enough points will be
+used to compute the SH parametrization.</p>
+<p>Also, points as the edge of the image are set to zero (background)
+to make sure the mesh forms a manifold.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>np.array</em>) – Input array where the mesh will be computed on</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mesh</strong> (<em>vtkPolyData</em>) – 3d mesh in VTK format</p></li>
+<li><p><strong>img_output</strong> (<em>np.array</em>) – Input image after pre-processing</p></li>
+<li><p><strong>centroid</strong> (<em>np.array</em>) – x, y, z coordinates of the mesh centroid</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lcc</strong> (<em>bool, optional</em>) – Wheather or not to compute the mesh only on the largest
+connected component found in the input connected component,
+default is True.</p></li>
+<li><p><strong>sigma</strong> (<em>float, optional</em>) – The degree of smooth to be applied to the input image, default
+is 0 (no smooth).</p></li>
+<li><p><strong>translate_to_origin</strong> (<em>bool, optional</em>) – Wheather or not translate the mesh to the origin (0,0,0),
+default is True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_reconstruction_error">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_reconstruction_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_input</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_rec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_reconstruction_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_reconstruction_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute mean square error between two parametric grids. When applied
+to the input parametric grid and its corresponsing reconstructed
+version, it gives an idea of the quality of the parametrization with
+low values indicate good parametrization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>grid_input</strong> (<em>np.array</em>) – Parametric grid</p></li>
+<li><p><strong>grid_rec</strong> (<em>np.array</em>) – Reconstructed parametric grid</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mse</strong> – Mean square error</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_reconstruction_from_coeffs">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_reconstruction_from_coeffs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrec</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_reconstruction_from_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_reconstruction_from_coeffs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a set of spherical harmonic coefficients into
+a 3d mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>coeffs</strong> (<em>np.array</em>) – Input array of spherical harmonic coefficients. These
+array has dimensions 2xLxM, where the first dimension
+is 0 for cosine-associated coefficients and 1 for
+sine-associated coefficients. Second and thrid dimensions
+represent the expansion parameters (l,m).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mesh</strong> – Mesh that represents the input parametric grid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vtkPolyData</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>lrec</strong> (<em>int, optional</em>) – Degree of the reconstruction. If lrec&lt;l, then only
+coefficients l&lt;lrec will be used for creating the mesh.
+If lrec&gt;l, then the mesh will be oversampled.
+Default is 0 meaning all coefficients
+available in the matrix coefficients will be used.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The mesh resolution is set by the size of the coefficients
+matrix and therefore not affected by lrec.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.get_reconstruction_from_grid">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">get_reconstruction_from_grid</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">centroid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_reconstruction_from_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_reconstruction_from_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a parametric 2D grid of type (lon,lat,rad) into
+a 3d mesh. lon in [0,2pi], lat in [0,pi].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>grid</strong> (<em>np.array</em>) – Input grid where the element grid[i,j] represents the
+radial coordinate at longitude i*2pi/grid.shape[0] and
+latitude j*pi/grid.shape[1].</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mesh</strong> – Mesh that represents the input parametric grid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vtkPolyData</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><p><strong>centroid</strong> (<em>tuple of floats, optional</em>) – x, y and z coordinates of the centroid where the mesh
+will be translated to, default is (0,0,0).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.rotate_image_2d">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">rotate_image_2d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_order</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#rotate_image_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.rotate_image_2d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotate multichannel image in 2D by a given angle. The
+expected shape of image is (C,Z,Y,X). The rotation will
+be done clock-wise around the center of the image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>angle</strong> (<em>float</em>) – Angle in degrees</p></li>
+<li><p><strong>interpolation_order</strong> (<em>int</em>) – Order of interpolation used during the image rotation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>img_rot</strong> – Rotated image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.save_polydata">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">save_polydata</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vtkmodules.vtkCommonDataModel.vtkPolyData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#save_polydata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.save_polydata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves a mesh as a vtkPolyData file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh</strong> (<em>vtkPolyData</em>) – Input mesh</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) – File path where the mesh will be saved</p></li>
+<li><p><strong>output_type</strong> (<em>vtk or ply</em>) – Format of output polydata file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="aicsshparam.shtools.update_mesh_points">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></code><code class="sig-name descname"><span class="pre">update_mesh_points</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">vtkmodules.vtkCommonDataModel.vtkPolyData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_new</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_new</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_new</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.array</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#update_mesh_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.update_mesh_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the xyz coordinates of points in the input mesh
+with new coordinates provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mesh</strong> (<em>vtkPolyData</em>) – Mesh in VTK format to be updated.</p></li>
+<li><p><strong>x_new, y_new and z_new</strong> (<em>np.array</em>) – Array containing the new coordinates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>mesh_updated</strong> – Mesh with updated coordinates.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>vtkPolyData</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This function also re-calculate the new normal vectors
+for the updated mesh.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-aicsshparam">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsshparam" title="Permalink to this headline">¶</a></h2>
+<p>Top-level package for aics-shparam.</p>
+<dl class="py function">
+<dt id="aicsshparam.get_module_version">
+<code class="sig-prename descclassname"><span class="pre">aicsshparam.</span></code><code class="sig-name descname"><span class="pre">get_module_version</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam.html#get_module_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.get_module_version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2021, Matheus Viana.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+aicsshparam package
+===================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   aicsshparam.bin
+
+Submodules
+----------
+
+aicsshparam.shparam module
+--------------------------
+
+.. automodule:: aicsshparam.shparam
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+aicsshparam.shtools module
+--------------------------
+
+.. automodule:: aicsshparam.shtools
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: aicsshparam
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,10 @@
+aicsshparam.bin package
+=======================
+
+Module contents
+---------------
+
+.. automodule:: aicsshparam.bin
+   :members:
+   :undoc-members:
+   :show-inheritance:
