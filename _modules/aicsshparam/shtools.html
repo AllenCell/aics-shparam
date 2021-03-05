@@ -438,7 +438,7 @@
 
         <span class="c1"># Calculate smallest angle</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">if</span> <span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">:</span>
             <span class="n">angle</span> <span class="o">=</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
     <span class="c1"># Apply skimage rotation clock-wise</span>
