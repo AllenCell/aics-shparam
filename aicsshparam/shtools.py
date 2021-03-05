@@ -255,7 +255,7 @@ def align_image_2d(
 
         # Calculate smallest angle
         angle = 0.0
-        if eigenvecs[0][0] > EPS:
+        if np.abs(eigenvecs[0][0]) > EPS:
             angle = 180.0 * np.arctan(eigenvecs[0][1] / eigenvecs[0][0]) / np.pi
 
     # Apply skimage rotation clock-wise
