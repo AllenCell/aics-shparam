@@ -184,7 +184,9 @@ def rotate_image_2d(image: np.array, angle: float, interpolation_order: int = 0)
 
 
 def align_image_2d(
-    image: np.array, alignment_channel: int = None, make_unique: bool = False,
+    image: np.array,
+    alignment_channel: int = None,
+    make_unique: bool = False,
     compute_aligned_image: bool = True,
 ):
 
