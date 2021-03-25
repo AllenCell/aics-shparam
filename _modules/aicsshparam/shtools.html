@@ -367,7 +367,10 @@
 
 
 <div class="viewcode-block" id="align_image_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.align_image_2d">[docs]</a><span class="k">def</span> <span class="nf">align_image_2d</span><span class="p">(</span>
-    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">alignment_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">make_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="n">alignment_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">make_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">compute_aligned_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;Align a multichannel 3D image based on the channel</span>
@@ -383,6 +386,8 @@
 <span class="sd">        alignment will be propagated to all other channels.</span>
 <span class="sd">    make_unique : bool</span>
 <span class="sd">        Set true to make sure the alignment rotation is unique.</span>
+<span class="sd">    compute_aligned_image : bool</span>
+<span class="sd">        Set false to only compute and return the alignment angle</span>
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    img_aligned : np.array</span>
@@ -441,10 +446,13 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">:</span>
             <span class="n">angle</span> <span class="o">=</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
-    <span class="c1"># Apply skimage rotation clock-wise</span>
-    <span class="n">img_aligned</span> <span class="o">=</span> <span class="n">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">compute_aligned_image</span><span class="p">:</span>
+        <span class="c1"># Apply skimage rotation clock-wise</span>
+        <span class="n">img_aligned</span> <span class="o">=</span> <span class="n">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">img_aligned</span><span class="p">,</span> <span class="n">angle</span></div>
+        <span class="k">return</span> <span class="n">img_aligned</span><span class="p">,</span> <span class="n">angle</span>
+
+    <span class="k">return</span> <span class="n">angle</span></div>
 
 
 <div class="viewcode-block" id="apply_image_alignment_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.apply_image_alignment_2d">[docs]</a><span class="k">def</span> <span class="nf">apply_image_alignment_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
