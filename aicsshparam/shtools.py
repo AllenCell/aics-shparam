@@ -126,9 +126,11 @@ def get_mesh_from_image(
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
     centroid = coords.mean(axis=0, keepdims=True)
 
-    # Translate to origin
-    coords -= centroid
-    mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(coords))
+    if translate_to_origin:
+
+        # Translate to origin
+        coords -= centroid
+        mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(coords))
 
     return mesh, img_output, tuple(centroid.squeeze())
 
