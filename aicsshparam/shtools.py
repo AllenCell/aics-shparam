@@ -186,7 +186,10 @@ def rotate_image_2d(image: np.array, angle: float, interpolation_order: int = 0)
 
 
 def align_image_2d(
-    image: np.array, alignment_channel: int = None, make_unique: bool = False
+    image: np.array,
+    alignment_channel: int = None,
+    make_unique: bool = False,
+    compute_aligned_image: bool = True,
 ):
 
     """Align a multichannel 3D image based on the channel
@@ -202,6 +205,8 @@ def align_image_2d(
         alignment will be propagated to all other channels.
     make_unique : bool
         Set true to make sure the alignment rotation is unique.
+    compute_aligned_image : bool
+        Set false to only compute and return the alignment angle
     Returns
     -------
     img_aligned : np.array
@@ -260,10 +265,13 @@ def align_image_2d(
         if np.abs(eigenvecs[0][0]) > EPS:
             angle = 180.0 * np.arctan(eigenvecs[0][1] / eigenvecs[0][0]) / np.pi
 
-    # Apply skimage rotation clock-wise
-    img_aligned = rotate_image_2d(image=image, angle=angle)
+    if compute_aligned_image:
+        # Apply skimage rotation clock-wise
+        img_aligned = rotate_image_2d(image=image, angle=angle)
 
-    return img_aligned, angle
+        return img_aligned, angle
+
+    return angle
 
 
 def apply_image_alignment_2d(image: np.array, angle: float):
