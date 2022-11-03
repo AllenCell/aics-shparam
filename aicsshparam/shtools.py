@@ -67,7 +67,7 @@ def get_mesh_from_image(
     img = np.swapaxes(img, 0, 2)
 
     # Extracting the largest connected component
-    if lcc == True:
+    if lcc is True:
 
         img = skmorpho.label(img.astype(np.uint8))
 
@@ -126,7 +126,7 @@ def get_mesh_from_image(
     coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
     centroid = coords.mean(axis=0, keepdims=True)
 
-    if translate_to_origin == True:
+    if translate_to_origin is True:
 
         # Translate to origin
         coords -= centroid
@@ -240,7 +240,7 @@ def align_image_2d(
 
     eigenvecs = pca.components_
 
-    if make_unique == True:
+    if make_unique is True:
 
         # Calculate angle with arctan2
         angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
@@ -265,7 +265,7 @@ def align_image_2d(
         if np.abs(eigenvecs[0][0]) > EPS:
             angle = 180.0 * np.arctan(eigenvecs[0][1] / eigenvecs[0][0]) / np.pi
 
-    if compute_aligned_image == True:
+    if compute_aligned_image is True:
         # Apply skimage rotation clock-wise
         img_aligned = rotate_image_2d(image=image, angle=angle)
 
