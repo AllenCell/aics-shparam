@@ -84,6 +84,6 @@ setup(
     url="https://github.com/AllenCell/aics-shparam",
     # Do not edit this string manually, always use bumpversion
     # Details in CONTRIBUTING.rst
-    version="0.1.2",
+    version="0.1.3",
     zip_safe=False,
 )
