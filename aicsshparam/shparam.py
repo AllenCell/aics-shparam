@@ -142,7 +142,7 @@ def get_shcoeffs(
     mesh = shtools.update_mesh_points(mesh, x, y, z)
 
     # Cartesian to spherical coordinates convertion
-    rad = np.sqrt(x ** 2 + y ** 2 + z ** 2)
+    rad = np.sqrt(x**2 + y**2 + z**2)
     lat = np.arccos(np.divide(z, rad, out=np.zeros_like(rad), where=(rad != 0)))
     lon = np.pi + np.arctan2(y, x)
 
