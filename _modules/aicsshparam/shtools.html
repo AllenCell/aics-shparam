@@ -32,9 +32,6 @@
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
     
@@ -227,7 +224,7 @@
     <span class="n">translate_to_origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Converts a numpy array into a vtkImageData and then into a 3d mesh</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a numpy array into a vtkImageData and then into a 3d mesh</span>
 <span class="sd">    using vtkContourFilter. The input is assumed to be binary and the</span>
 <span class="sd">    isosurface value is set to 0.5.</span>
 
@@ -344,7 +341,7 @@
 
 <div class="viewcode-block" id="rotate_image_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.rotate_image_2d">[docs]</a><span class="k">def</span> <span class="nf">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">interpolation_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Rotate multichannel image in 2D by a given angle. The</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate multichannel image in 2D by a given angle. The</span>
 <span class="sd">    expected shape of image is (C,Z,Y,X). The rotation will</span>
 <span class="sd">    be done clock-wise around the center of the image.</span>
 
@@ -399,7 +396,7 @@
     <span class="n">compute_aligned_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Align a multichannel 3D image based on the channel</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Align a multichannel 3D image based on the channel</span>
 <span class="sd">    specified by alignment_channel. The expected shape of</span>
 <span class="sd">    image is (C,Z,Y,X) or (Z,Y,X).</span>
 
@@ -483,7 +480,7 @@
 
 <div class="viewcode-block" id="apply_image_alignment_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.apply_image_alignment_2d">[docs]</a><span class="k">def</span> <span class="nf">apply_image_alignment_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Apply an existing set of alignment parameters to a</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply an existing set of alignment parameters to a</span>
 <span class="sd">    multichannel 3D image. The expected shape of</span>
 <span class="sd">    image is (C,Z,Y,X) or (Z,Y,X).</span>
 
@@ -514,7 +511,7 @@
     <span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">x_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">y_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">z_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Updates the xyz coordinates of points in the input mesh</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates the xyz coordinates of points in the input mesh</span>
 <span class="sd">    with new coordinates provided.</span>
 
 <span class="sd">    Parameters</span>
@@ -552,7 +549,7 @@
     <span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
 <span class="sd">    a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses</span>
 <span class="sd">    a spherical mesh with an even distribution of points. The</span>
 <span class="sd">    even distribution is obtained via the Fibonacci grid rule.</span>
@@ -646,7 +643,7 @@
     <span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span>
 <span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
 <span class="sd">    a 3d mesh using the Fibonacci grid for generating a mesh</span>
 <span class="sd">    with a more even distribution of points</span>
 
@@ -693,7 +690,7 @@
 
 <div class="viewcode-block" id="get_reconstruction_from_grid"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_grid">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
 
-    <span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
 <span class="sd">    a 3d mesh. lon in [0,2pi], lat in [0,pi].</span>
 
 <span class="sd">    Parameters</span>
@@ -760,7 +757,7 @@
 
 <div class="viewcode-block" id="get_reconstruction_from_coeffs"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_coeffs">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_coeffs</span><span class="p">(</span><span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
 <span class="sd">    a 3d mesh.</span>
 
 <span class="sd">    Parameters</span>
@@ -819,7 +816,7 @@
 
 <div class="viewcode-block" id="get_reconstruction_error"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_error">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_error</span><span class="p">(</span><span class="n">grid_input</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Compute mean square error between two parametric grids. When applied</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute mean square error between two parametric grids. When applied</span>
 <span class="sd">    to the input parametric grid and its corresponsing reconstructed</span>
 <span class="sd">    version, it gives an idea of the quality of the parametrization with</span>
 <span class="sd">    low values indicate good parametrization.</span>
@@ -844,7 +841,7 @@
 
 <div class="viewcode-block" id="save_polydata"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.save_polydata">[docs]</a><span class="k">def</span> <span class="nf">save_polydata</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 
-    <span class="sd">&quot;&quot;&quot;Saves a mesh as a vtkPolyData file.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves a mesh as a vtkPolyData file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
