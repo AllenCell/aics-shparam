@@ -43,7 +43,7 @@ requirements = [
     'scikit-image>=0.16.2',
     'scikit-learn>=0.22.1',
     'vtk>=9.0.1',
-    'pyshtools>=4.5'
+    'pyshtools==4.9.1'
 ]
 
 extra_requirements = {
