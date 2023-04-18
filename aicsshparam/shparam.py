@@ -172,8 +172,8 @@ def get_shcoeffs(
 
     keys = []
     for suffix in ["C", "S"]:
-        for l, m in zip(lvalues.flatten(), lvalues.T.flatten()):
-            keys.append(f"shcoeffs_L{l}M{m}{suffix}")
+        for L, m in zip(lvalues.flatten(), lvalues.T.flatten()):
+            keys.append(f"shcoeffs_L{L}M{m}{suffix}")
 
     coeffs_dict = dict(zip(keys, coeffs.flatten()))
 
