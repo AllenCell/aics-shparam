@@ -16,7 +16,6 @@ def get_shcoeffs(
     alignment_2d: bool = True,
     make_unique: bool = False,
 ):
-
     """Compute spherical harmonics coefficients that describe an object stored as
     an image.
 
@@ -173,7 +172,7 @@ def get_shcoeffs(
 
     keys = []
     for suffix in ["C", "S"]:
-        for (l, m) in zip(lvalues.flatten(), lvalues.T.flatten()):
+        for l, m in zip(lvalues.flatten(), lvalues.T.flatten()):
             keys.append(f"shcoeffs_L{l}M{m}{suffix}")
 
     coeffs_dict = dict(zip(keys, coeffs.flatten()))

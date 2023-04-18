@@ -19,7 +19,6 @@ def get_mesh_from_image(
     lcc: bool = True,
     translate_to_origin: bool = True,
 ):
-
     """Converts a numpy array into a vtkImageData and then into a 3d mesh
     using vtkContourFilter. The input is assumed to be binary and the
     isosurface value is set to 0.5.
@@ -68,7 +67,6 @@ def get_mesh_from_image(
 
     # Extracting the largest connected component
     if lcc is True:
-
         img = skmorpho.label(img.astype(np.uint8))
 
         counts = np.bincount(img.flatten())
@@ -80,7 +78,6 @@ def get_mesh_from_image(
 
     # Smooth binarize the input image and binarize
     if sigma > 0:
-
         img = skfilters.gaussian(img.astype(np.float32), sigma=(sigma, sigma, sigma))
 
         img[img < 1.0 / np.exp(1.0)] = 0
@@ -127,7 +124,6 @@ def get_mesh_from_image(
     centroid = coords.mean(axis=0, keepdims=True)
 
     if translate_to_origin is True:
-
         # Translate to origin
         coords -= centroid
         mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(coords))
@@ -136,7 +132,6 @@ def get_mesh_from_image(
 
 
 def rotate_image_2d(image: np.array, angle: float, interpolation_order: int = 0):
-
     """Rotate multichannel image in 2D by a given angle. The
     expected shape of image is (C,Z,Y,X). The rotation will
     be done clock-wise around the center of the image.
@@ -191,7 +186,6 @@ def align_image_2d(
     make_unique: bool = False,
     compute_aligned_image: bool = True,
 ):
-
     """Align a multichannel 3D image based on the channel
     specified by alignment_channel. The expected shape of
     image is (C,Z,Y,X) or (Z,Y,X).
@@ -241,7 +235,6 @@ def align_image_2d(
     eigenvecs = pca.components_
 
     if make_unique is True:
-
         # Calculate angle with arctan2
         angle = 180.0 * np.arctan2(eigenvecs[0][1], eigenvecs[0][0]) / np.pi
 
@@ -259,7 +252,6 @@ def align_image_2d(
         angle = angle % 360
 
     else:
-
         # Calculate smallest angle
         angle = 0.0
         if np.abs(eigenvecs[0][0]) > EPS:
@@ -275,7 +267,6 @@ def align_image_2d(
 
 
 def apply_image_alignment_2d(image: np.array, angle: float):
-
     """Apply an existing set of alignment parameters to a
     multichannel 3D image. The expected shape of
     image is (C,Z,Y,X) or (Z,Y,X).
@@ -306,7 +297,6 @@ def apply_image_alignment_2d(image: np.array, angle: float):
 def update_mesh_points(
     mesh: vtk.vtkPolyData, x_new: np.array, y_new: np.array, z_new: np.array
 ):
-
     """Updates the xyz coordinates of points in the input mesh
     with new coordinates provided.
 
@@ -344,7 +334,6 @@ def update_mesh_points(
 def get_even_reconstruction_from_grid(
     grid: np.array, npoints: int = 512, centroid: Tuple = (0, 0, 0)
 ):
-
     """Converts a parametric 2D grid of type (lon,lat,rad) into
     a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses
     a spherical mesh with an even distribution of points. The
@@ -399,7 +388,7 @@ def get_even_reconstruction_from_grid(
 
     # Add points (x,y,z) to a polydata
     points = vtk.vtkPoints()
-    for (x, y, z) in zip(fib_x, fib_y, fib_z):
+    for x, y, z in zip(fib_x, fib_y, fib_z):
         points.InsertNextPoint(x, y, z)
 
     rec = vtk.vtkPolyData()
@@ -438,7 +427,6 @@ def get_even_reconstruction_from_grid(
 def get_even_reconstruction_from_coeffs(
     coeffs: np.array, lrec: int = 0, npoints: int = 512
 ):
-
     """Converts a set of spherical harmonic coefficients into
     a 3d mesh using the Fibonacci grid for generating a mesh
     with a more even distribution of points
@@ -485,7 +473,6 @@ def get_even_reconstruction_from_coeffs(
 
 
 def get_reconstruction_from_grid(grid: np.array, centroid: Tuple = (0, 0, 0)):
-
     """Converts a parametric 2D grid of type (lon,lat,rad) into
     a 3d mesh. lon in [0,2pi], lat in [0,pi].
 
@@ -552,7 +539,6 @@ def get_reconstruction_from_grid(grid: np.array, centroid: Tuple = (0, 0, 0)):
 
 
 def get_reconstruction_from_coeffs(coeffs: np.array, lrec: int = 0):
-
     """Converts a set of spherical harmonic coefficients into
     a 3d mesh.
 
@@ -611,7 +597,6 @@ def get_reconstruction_from_coeffs(coeffs: np.array, lrec: int = 0):
 
 
 def get_reconstruction_error(grid_input: np.array, grid_rec: np.array):
-
     """Compute mean square error between two parametric grids. When applied
     to the input parametric grid and its corresponsing reconstructed
     version, it gives an idea of the quality of the parametrization with
@@ -636,7 +621,6 @@ def get_reconstruction_error(grid_input: np.array, grid_rec: np.array):
 
 
 def save_polydata(mesh: vtk.vtkPolyData, filename: str):
-
     """Saves a mesh as a vtkPolyData file.
 
     Parameters
