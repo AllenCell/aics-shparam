@@ -223,7 +223,6 @@
     <span class="n">lcc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">translate_to_origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a numpy array into a vtkImageData and then into a 3d mesh</span>
 <span class="sd">    using vtkContourFilter. The input is assumed to be binary and the</span>
 <span class="sd">    isosurface value is set to 0.5.</span>
@@ -272,7 +271,6 @@
 
     <span class="c1"># Extracting the largest connected component</span>
     <span class="k">if</span> <span class="n">lcc</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-
         <span class="n">img</span> <span class="o">=</span> <span class="n">skmorpho</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">))</span>
 
         <span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
@@ -284,7 +282,6 @@
 
     <span class="c1"># Smooth binarize the input image and binarize</span>
     <span class="k">if</span> <span class="n">sigma</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-
         <span class="n">img</span> <span class="o">=</span> <span class="n">skfilters</span><span class="o">.</span><span class="n">gaussian</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="n">sigma</span><span class="o">=</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
 
         <span class="n">img</span><span class="p">[</span><span class="n">img</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -331,7 +328,6 @@
     <span class="n">centroid</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">translate_to_origin</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-
         <span class="c1"># Translate to origin</span>
         <span class="n">coords</span> <span class="o">-=</span> <span class="n">centroid</span>
         <span class="n">mesh</span><span class="o">.</span><span class="n">GetPoints</span><span class="p">()</span><span class="o">.</span><span class="n">SetData</span><span class="p">(</span><span class="n">numpy_support</span><span class="o">.</span><span class="n">numpy_to_vtk</span><span class="p">(</span><span class="n">coords</span><span class="p">))</span>
@@ -340,7 +336,6 @@
 
 
 <div class="viewcode-block" id="rotate_image_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.rotate_image_2d">[docs]</a><span class="k">def</span> <span class="nf">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">interpolation_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate multichannel image in 2D by a given angle. The</span>
 <span class="sd">    expected shape of image is (C,Z,Y,X). The rotation will</span>
 <span class="sd">    be done clock-wise around the center of the image.</span>
@@ -395,7 +390,6 @@
     <span class="n">make_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">compute_aligned_image</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Align a multichannel 3D image based on the channel</span>
 <span class="sd">    specified by alignment_channel. The expected shape of</span>
 <span class="sd">    image is (C,Z,Y,X) or (Z,Y,X).</span>
@@ -445,7 +439,6 @@
     <span class="n">eigenvecs</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">components_</span>
 
     <span class="k">if</span> <span class="n">make_unique</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
-
         <span class="c1"># Calculate angle with arctan2</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
 
@@ -463,7 +456,6 @@
         <span class="n">angle</span> <span class="o">=</span> <span class="n">angle</span> <span class="o">%</span> <span class="mi">360</span>
 
     <span class="k">else</span><span class="p">:</span>
-
         <span class="c1"># Calculate smallest angle</span>
         <span class="n">angle</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigenvecs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">:</span>
@@ -479,7 +471,6 @@
 
 
 <div class="viewcode-block" id="apply_image_alignment_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.apply_image_alignment_2d">[docs]</a><span class="k">def</span> <span class="nf">apply_image_alignment_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply an existing set of alignment parameters to a</span>
 <span class="sd">    multichannel 3D image. The expected shape of</span>
 <span class="sd">    image is (C,Z,Y,X) or (Z,Y,X).</span>
@@ -510,7 +501,6 @@
 <div class="viewcode-block" id="update_mesh_points"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.update_mesh_points">[docs]</a><span class="k">def</span> <span class="nf">update_mesh_points</span><span class="p">(</span>
     <span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">x_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">y_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">z_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span>
 <span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates the xyz coordinates of points in the input mesh</span>
 <span class="sd">    with new coordinates provided.</span>
 
@@ -548,7 +538,6 @@
 <div class="viewcode-block" id="get_even_reconstruction_from_grid"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_grid">[docs]</a><span class="k">def</span> <span class="nf">get_even_reconstruction_from_grid</span><span class="p">(</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
 <span class="sd">    a 3d mesh. lon in [0,2pi], lat in [0,pi]. The method uses</span>
 <span class="sd">    a spherical mesh with an even distribution of points. The</span>
@@ -603,7 +592,7 @@
 
     <span class="c1"># Add points (x,y,z) to a polydata</span>
     <span class="n">points</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPoints</span><span class="p">()</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fib_x</span><span class="p">,</span> <span class="n">fib_y</span><span class="p">,</span> <span class="n">fib_z</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fib_x</span><span class="p">,</span> <span class="n">fib_y</span><span class="p">,</span> <span class="n">fib_z</span><span class="p">):</span>
         <span class="n">points</span><span class="o">.</span><span class="n">InsertNextPoint</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
 
     <span class="n">rec</span> <span class="o">=</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">()</span>
@@ -642,7 +631,6 @@
 <div class="viewcode-block" id="get_even_reconstruction_from_coeffs"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_coeffs">[docs]</a><span class="k">def</span> <span class="nf">get_even_reconstruction_from_coeffs</span><span class="p">(</span>
     <span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span>
 <span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
 <span class="sd">    a 3d mesh using the Fibonacci grid for generating a mesh</span>
 <span class="sd">    with a more even distribution of points</span>
@@ -689,7 +677,6 @@
 
 
 <div class="viewcode-block" id="get_reconstruction_from_grid"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_grid">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
 <span class="sd">    a 3d mesh. lon in [0,2pi], lat in [0,pi].</span>
 
@@ -756,7 +743,6 @@
 
 
 <div class="viewcode-block" id="get_reconstruction_from_coeffs"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_coeffs">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_coeffs</span><span class="p">(</span><span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
 <span class="sd">    a 3d mesh.</span>
 
@@ -815,7 +801,6 @@
 
 
 <div class="viewcode-block" id="get_reconstruction_error"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_error">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_error</span><span class="p">(</span><span class="n">grid_input</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute mean square error between two parametric grids. When applied</span>
 <span class="sd">    to the input parametric grid and its corresponsing reconstructed</span>
 <span class="sd">    version, it gives an idea of the quality of the parametrization with</span>
@@ -840,7 +825,6 @@
 
 
 <div class="viewcode-block" id="save_polydata"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.save_polydata">[docs]</a><span class="k">def</span> <span class="nf">save_polydata</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves a mesh as a vtkPolyData file.</span>
 
 <span class="sd">    Parameters</span>
