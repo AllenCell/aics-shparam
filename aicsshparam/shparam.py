@@ -61,13 +61,13 @@ def get_shcoeffs(
         The degree of smooth to be applied to the input image, default is 0 (no
         smooth)
     compute_lcc : bool, optional
-        Whether to compute the largest connected component before appliying the
+        Whether to compute the largest connected component before applying the
         spherical harmonic parametrization, default is True. Set compute_lcc to
         False in case you are sure the input image contains a single connected
         component. It is crucial that parametrization is calculated on a single
         connected component object.
     alignment_2d : bool
-        Wheather the image should be aligned in 2d. Default is True.
+        Whether the image should be aligned in 2d. Default is True.
     make_unique : bool
         Set true to make sure the alignment rotation is unique.
 

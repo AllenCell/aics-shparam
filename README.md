@@ -1,4 +1,4 @@
-# AICS Spherical Hamonics Parametrization
+# AICS Spherical Harmonics Parametrization
 
 [![Build Status](https://github.com/AllenCell/aics-shparam/workflows/Build%20Main/badge.svg)](https://github.com/AllenCell/aics-shparam/actions)
 [![Documentation](https://github.com/AllenCell/aics-shparam/workflows/Documentation/badge.svg)](https://AllenCell.github.io/aics-shparam/)
