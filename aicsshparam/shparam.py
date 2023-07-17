@@ -16,76 +16,82 @@ def get_shcoeffs(
     alignment_2d: bool = True,
     make_unique: bool = False,
 ):
-    """Compute spherical harmonics coefficients that describe an object stored as
+    """
+    Compute spherical harmonics coefficients that describe an object stored as
     an image.
 
-        Calculates the spherical harmonics coefficients that parametrize the shape
-        formed by the foreground set of voxels in the input image. The input image
-        does not need to be binary and all foreground voxels (background=0) are used
-        in the computation. Foreground voxels must form a single connected component.
-        If you are sure that this is the case for the input image, you can set
-        compute_lcc to False to speed up the calculation. In addition, the shape is
-        expected to be centered in the input image.
+    Calculates the spherical harmonics coefficients that parametrize the shape
+    formed by the foreground set of voxels in the input image. The input image
+    does not need to be binary and all foreground voxels (background=0) are used
+    in the computation. Foreground voxels must form a single connected component.
+    If you are sure that this is the case for the input image, you can set
+    compute_lcc to False to speed up the calculation. In addition, the shape is
+    expected to be centered in the input image.
 
-        Parameters
-        ----------
-        image : ndarray
-            Input image. Expected to have shape ZYX.
-        lmax : int
-            Order of the spherical harmonics parametrization. The higher the order
-            the more shape details are represented.
-        Returns
-        -------
-        coeffs_dict : dict
-            Dictionary with the spherical harmonics coefficients and the mean square
-            error between input and its parametrization
-        grid_rec : ndarray
-            Parametric grid representing sh parametrization
-        image_ : ndarray
-            Input image after pre-processing (lcc calculation, smooth and binarization).
-        mesh : vtkPolyData
-            Polydata representation of image_.
-        grid_down : ndarray
-            Parametric grid representing input object.
-        transform : tuple of floats
-            (xc, yc, zc, angle) if alignment_2d is True or
-            (xc, yc, zc) if alignment_2d is False. (xc, yc, zc) are the coordinates
-            of the shape centroid after alignment; angle is the angle used to align
-            the image
+    Parameters
+    ----------
+    image : ndarray
+        Input image. Expected to have shape ZYX.
+    lmax : int
+        Order of the spherical harmonics parametrization. The higher the order
+        the more shape details are represented.
 
-        Other parameters
-        ----------------
-        sigma : float, optional
-            The degree of smooth to be applied to the input image, default is 0 (no
-            smooth)
-        compute_lcc : bool, optional
-            Whether to compute the largest connected component before appliying the
-            spherical harmonic parametrization, default is True. Set compute_lcc to
-            False in case you are sure the input image contains a single connected
-            component. It is crucial that parametrization is calculated on a single
-            connected component object.
-        alignment_2d : bool
-            Wheather the image should be aligned in 2d. Default is True.
-        make_unique : bool
-            Set true to make sure the alignment rotation is unique.
+    Returns
+    -------
+    coeffs_dict : dict
+        Dictionary with the spherical harmonics coefficients and the mean square
+        error between input and its parametrization
+    grid_rec : ndarray
+        Parametric grid representing sh parametrization
+    image\_ : ndarray
+        Input image after pre-processing (lcc calculation, smooth and binarization).
+    mesh : vtkPolyData
+        Polydata representation of image\_.
+    grid_down : ndarray
+        Parametric grid representing input object.
+    transform : tuple of floats
+        (xc, yc, zc, angle) if alignment_2d is True or
+        (xc, yc, zc) if alignment_2d is False. (xc, yc, zc) are the coordinates
+        of the shape centroid after alignment; angle is the angle used to align
+        the image
 
-        Notes
-        -----
-        Alignment mode '2d' allows for keeping the z axis unchanged which might be
-        important for some applications.
+    Other parameters
+    ----------------
+    sigma : float, optional
+        The degree of smooth to be applied to the input image, default is 0 (no
+        smooth)
+    compute_lcc : bool, optional
+        Whether to compute the largest connected component before appliying the
+        spherical harmonic parametrization, default is True. Set compute_lcc to
+        False in case you are sure the input image contains a single connected
+        component. It is crucial that parametrization is calculated on a single
+        connected component object.
+    alignment_2d : bool
+        Wheather the image should be aligned in 2d. Default is True.
+    make_unique : bool
+        Set true to make sure the alignment rotation is unique.
 
-        Examples
-        --------
-            import numpy as np
-            from aicsshparam import shparam, shtools
+    Notes
+    -----
+    Alignment mode '2d' allows for keeping the z axis unchanged which might be
+    important for some applications.
 
-            img = np.ones((32,32,32), dtype=np.uint8)
+    Examples
+    --------
 
-            (coeffs, grid_rec), (image_, mesh, grid, transform) =
-                shparam.get_shcoeffs(image=img, lmax=2)
-            mse = shtools.get_reconstruction_error(grid, grid_rec)
+    .. code-block:: python
 
-            print('Coefficients:', coeffs)
+        import numpy as np
+        from aicsshparam import shparam, shtools
+
+        img = np.ones((32,32,32), dtype=np.uint8)
+
+        (coeffs, grid_rec), (image_, mesh, grid, transform) =
+            shparam.get_shcoeffs(image=img, lmax=2)
+        mse = shtools.get_reconstruction_error(grid, grid_rec)
+
+        print('Coefficients:', coeffs)
+
         >>> Coefficients: {'shcoeffs_L0M0C': 18.31594310878251, 'shcoeffs_L0M1C': 0.0,
         'shcoeffs_L0M2C': 0.0, 'shcoeffs_L1M0C': 0.020438775421611564, 'shcoeffs_L1M1C':
         -0.0030960466571801513, 'shcoeffs_L1M2C': 0.0, 'shcoeffs_L2M0C':
@@ -95,7 +101,9 @@ def get_shcoeffs(
         'shcoeffs_L1M1S': 3.799611612562637e-05, 'shcoeffs_L1M2S': 0.0,
         'shcoeffs_L2M0S': 0.0, 'shcoeffs_L2M1S': 3.672543904347801e-07,
         'shcoeffs_L2M2S': 0.0002230857005948496}
-            print('Error:', mse)
+
+        print('Error:', mse)
+
         >>> Error: 2.3738182456948795
     """
 
