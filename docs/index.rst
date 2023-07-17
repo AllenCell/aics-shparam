@@ -1,16 +1,13 @@
-Welcome to aics-shparam's documentation!
-======================================
-
 .. toctree::
    :hidden:
    :maxdepth: 1
    :caption: Contents:
 
    Overview <self>
+   Spherical Harmonics Parametrization <README.md>
    installation
    Package modules <modules>
    contributing
-   math
 
 .. mdinclude:: ../README.md
 

@@ -1,17 +1,17 @@
-# AICS Spherical Hamonics Parametrization
+# AICS Spherical Harmonics Parametrization
 
 [![Build Status](https://github.com/AllenCell/aics-shparam/workflows/Build%20Main/badge.svg)](https://github.com/AllenCell/aics-shparam/actions)
 [![Documentation](https://github.com/AllenCell/aics-shparam/workflows/Documentation/badge.svg)](https://AllenCell.github.io/aics-shparam/)
 
-### Spherical harmonics parametrization for 3D starlike shapes. 
+### Spherical harmonics parametrization for 3D starlike shapes.
 
-![Parameterization of cell and nuclear shape](docs/logo.gif)
+![Parameterization of cell and nuclear shape](https://github.com/AllenCell/aics-shparam/blob/main/docs/logo.gif?raw=true)
 
 ## Installation:
 
 **Stable Release**: `pip install aicsshparam`
 
-**Build from source to make customization**: 
+**Build from source to make customization**:
 
 ```console
 git clone git@github.com:AllenCell/aics-shparam.git
@@ -36,7 +36,7 @@ np.random.seed(42) # for reproducibility
 
 ```python
 # Function that returns binary images containing one of the three
-# shapes: cubes, spheres octahedrons of random sizes. 
+# shapes: cubes, spheres octahedrons of random sizes.
 def get_random_3d_shape():
     idx = np.random.choice([0, 1, 2], 1)[0]
     element = [ball, cube, octahedron][idx]
@@ -62,13 +62,13 @@ for i in range(30):
     (coeffs, _), _ = shparam.get_shcoeffs(image=img, lmax=4)
     coeffs.update({'label': label})
     df_coeffs = df_coeffs.append(coeffs, ignore_index=True)
- 
+
 # Vizualize the resulting dataframe
 with pd.option_context('display.max_rows', 5, 'display.max_columns', 5):
     display(df_coeffs)
 ```
 
-![Coefficients dataframe](docs/table1.jpg)
+![Coefficients dataframe](https://github.com/AllenCell/aics-shparam/blob/main/docs/table1.jpg?raw=true)
 
 ```python
 # Let's use PCA to reduce the dimensionality of the coefficients
@@ -84,7 +84,7 @@ with pd.option_context('display.max_rows', 5, 'display.max_columns', 5):
     display(df_trans)
 ```
 
-![PCA dataframe](docs/table2.jpg)
+![PCA dataframe](https://github.com/AllenCell/aics-shparam/blob/main/docs/table2.jpg?raw=true)
 
 ```python
 # Scatter plot to show how similar shapes are grouped together.
@@ -97,7 +97,7 @@ plt.ylabel('PC2')
 plt.show()
 ```
 
-![PC1 vs. PC2](docs/pc12.png)
+![PC1 vs. PC2](https://github.com/AllenCell/aics-shparam/blob/main/docs/pc12.png?raw=true)
 
 
 ## Reference
@@ -110,7 +110,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for information related to developing the
 
 ## Questions?
 
-If you have any questions, feel free to leave a comment in our Allen Cell forum: [https://forum.allencell.org/](https://forum.allencell.org/). 
+If you have any questions, feel free to leave a comment in our Allen Cell forum: [https://forum.allencell.org/](https://forum.allencell.org/).
 
 
-***Free software: Allen Institute Software License***
+_Free software: Allen Institute Software License_
