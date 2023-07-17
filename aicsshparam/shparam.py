@@ -43,10 +43,10 @@ def get_shcoeffs(
         error between input and its parametrization
     grid_rec : ndarray
         Parametric grid representing sh parametrization
-    image\_ : ndarray
+    image\\_ : ndarray
         Input image after pre-processing (lcc calculation, smooth and binarization).
     mesh : vtkPolyData
-        Polydata representation of image\_.
+        Polydata representation of image\\_.
     grid_down : ndarray
         Parametric grid representing input object.
     transform : tuple of floats
