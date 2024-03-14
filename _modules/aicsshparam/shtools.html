@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>aicsshparam.shtools - aics-shparam 0.1.7 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=36a5483c" />
     
     
 
@@ -215,7 +215,9 @@
 <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1e-12</span>
 
 
-<div class="viewcode-block" id="get_mesh_from_image"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_mesh_from_image">[docs]</a><span class="k">def</span> <span class="nf">get_mesh_from_image</span><span class="p">(</span>
+<div class="viewcode-block" id="get_mesh_from_image">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_mesh_from_image">[docs]</a>
+<span class="k">def</span> <span class="nf">get_mesh_from_image</span><span class="p">(</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
     <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="n">lcc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -333,7 +335,10 @@
     <span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">img_output</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">centroid</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span></div>
 
 
-<div class="viewcode-block" id="rotate_image_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.rotate_image_2d">[docs]</a><span class="k">def</span> <span class="nf">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">interpolation_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+
+<div class="viewcode-block" id="rotate_image_2d">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.rotate_image_2d">[docs]</a>
+<span class="k">def</span> <span class="nf">rotate_image_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">interpolation_order</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Rotate multichannel image in 2D by a given angle. The</span>
 <span class="sd">    expected shape of image is (C,Z,Y,X). The rotation will</span>
 <span class="sd">    be done clock-wise around the center of the image.</span>
@@ -382,7 +387,10 @@
     <span class="k">return</span> <span class="n">img_aligned</span></div>
 
 
-<div class="viewcode-block" id="align_image_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.align_image_2d">[docs]</a><span class="k">def</span> <span class="nf">align_image_2d</span><span class="p">(</span>
+
+<div class="viewcode-block" id="align_image_2d">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.align_image_2d">[docs]</a>
+<span class="k">def</span> <span class="nf">align_image_2d</span><span class="p">(</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
     <span class="n">alignment_channel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">make_unique</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -468,7 +476,10 @@
     <span class="k">return</span> <span class="n">angle</span></div>
 
 
-<div class="viewcode-block" id="apply_image_alignment_2d"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.apply_image_alignment_2d">[docs]</a><span class="k">def</span> <span class="nf">apply_image_alignment_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+
+<div class="viewcode-block" id="apply_image_alignment_2d">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.apply_image_alignment_2d">[docs]</a>
+<span class="k">def</span> <span class="nf">apply_image_alignment_2d</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">angle</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply an existing set of alignment parameters to a</span>
 <span class="sd">    multichannel 3D image. The expected shape of</span>
 <span class="sd">    image is (C,Z,Y,X) or (Z,Y,X).</span>
@@ -496,7 +507,10 @@
     <span class="k">return</span> <span class="n">img_aligned</span></div>
 
 
-<div class="viewcode-block" id="update_mesh_points"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.update_mesh_points">[docs]</a><span class="k">def</span> <span class="nf">update_mesh_points</span><span class="p">(</span>
+
+<div class="viewcode-block" id="update_mesh_points">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.update_mesh_points">[docs]</a>
+<span class="k">def</span> <span class="nf">update_mesh_points</span><span class="p">(</span>
     <span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">x_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">y_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">z_new</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates the xyz coordinates of points in the input mesh</span>
@@ -533,7 +547,10 @@
     <span class="k">return</span> <span class="n">mesh_updated</span></div>
 
 
-<div class="viewcode-block" id="get_even_reconstruction_from_grid"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_grid">[docs]</a><span class="k">def</span> <span class="nf">get_even_reconstruction_from_grid</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_even_reconstruction_from_grid">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_grid">[docs]</a>
+<span class="k">def</span> <span class="nf">get_even_reconstruction_from_grid</span><span class="p">(</span>
     <span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
@@ -626,7 +643,10 @@
     <span class="k">return</span> <span class="n">mesh</span></div>
 
 
-<div class="viewcode-block" id="get_even_reconstruction_from_coeffs"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_coeffs">[docs]</a><span class="k">def</span> <span class="nf">get_even_reconstruction_from_coeffs</span><span class="p">(</span>
+
+<div class="viewcode-block" id="get_even_reconstruction_from_coeffs">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_even_reconstruction_from_coeffs">[docs]</a>
+<span class="k">def</span> <span class="nf">get_even_reconstruction_from_coeffs</span><span class="p">(</span>
     <span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">npoints</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">512</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
@@ -674,7 +694,10 @@
     <span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">grid</span></div>
 
 
-<div class="viewcode-block" id="get_reconstruction_from_grid"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_grid">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
+
+<div class="viewcode-block" id="get_reconstruction_from_grid">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_grid">[docs]</a>
+<span class="k">def</span> <span class="nf">get_reconstruction_from_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">centroid</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a parametric 2D grid of type (lon,lat,rad) into</span>
 <span class="sd">    a 3d mesh. lon in [0,2pi], lat in [0,pi].</span>
 
@@ -740,7 +763,10 @@
     <span class="k">return</span> <span class="n">mesh</span></div>
 
 
-<div class="viewcode-block" id="get_reconstruction_from_coeffs"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_coeffs">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_from_coeffs</span><span class="p">(</span><span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_reconstruction_from_coeffs">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_from_coeffs">[docs]</a>
+<span class="k">def</span> <span class="nf">get_reconstruction_from_coeffs</span><span class="p">(</span><span class="n">coeffs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">lrec</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a set of spherical harmonic coefficients into</span>
 <span class="sd">    a 3d mesh.</span>
 
@@ -798,7 +824,10 @@
     <span class="k">return</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">grid</span></div>
 
 
-<div class="viewcode-block" id="get_reconstruction_error"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_error">[docs]</a><span class="k">def</span> <span class="nf">get_reconstruction_error</span><span class="p">(</span><span class="n">grid_input</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
+
+<div class="viewcode-block" id="get_reconstruction_error">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.get_reconstruction_error">[docs]</a>
+<span class="k">def</span> <span class="nf">get_reconstruction_error</span><span class="p">(</span><span class="n">grid_input</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute mean square error between two parametric grids. When applied</span>
 <span class="sd">    to the input parametric grid and its corresponsing reconstructed</span>
 <span class="sd">    version, it gives an idea of the quality of the parametrization with</span>
@@ -822,7 +851,10 @@
     <span class="k">return</span> <span class="n">mse</span></div>
 
 
-<div class="viewcode-block" id="save_polydata"><a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.save_polydata">[docs]</a><span class="k">def</span> <span class="nf">save_polydata</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+
+<div class="viewcode-block" id="save_polydata">
+<a class="viewcode-back" href="../../aicsshparam.html#aicsshparam.shtools.save_polydata">[docs]</a>
+<span class="k">def</span> <span class="nf">save_polydata</span><span class="p">(</span><span class="n">mesh</span><span class="p">:</span> <span class="n">vtk</span><span class="o">.</span><span class="n">vtkPolyData</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Saves a mesh as a vtkPolyData file.</span>
 
 <span class="sd">    Parameters</span>
@@ -850,6 +882,7 @@
     <span class="n">writer</span><span class="o">.</span><span class="n">SetInputData</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">SetFileName</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">Write</span><span class="p">()</span></div>
+
 </pre></div>
         </article>
       </div>
@@ -882,9 +915,9 @@
       
     </aside>
   </div>
-</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
+</div><script src="../../_static/documentation_options.js?v=ca7ad2ea"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>

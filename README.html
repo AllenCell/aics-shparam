@@ -1,15 +1,15 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="./">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Installation" href="installation.html" /><link rel="prev" title="AICS Spherical Harmonics Parametrization" href="index.html" />
 
-    <!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20 -->
+    <!-- Generated with Sphinx 7.2.6 and Furo 2024.01.29 -->
         <title>AICS Spherical Hamonics Parametrization - aics-shparam 0.1.7 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=e6660623a769aa55fea372102b9bf3151b292993" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=36a5483c" />
     
     
 
@@ -202,7 +202,7 @@
         </div>
         <article role="main">
           <section id="aics-spherical-hamonics-parametrization">
-<h1>AICS Spherical Hamonics Parametrization<a class="headerlink" href="#aics-spherical-hamonics-parametrization" title="Permalink to this heading">#</a></h1>
+<h1>AICS Spherical Hamonics Parametrization<a class="headerlink" href="#aics-spherical-hamonics-parametrization" title="Link to this heading">#</a></h1>
 <p>Spherical harmonics parametrization for starlike shapes. Segmented images are converted into triangular meshes using standard marching cubes algorithm from VTK (vtk.org) and centered at the origin. Coordinates of mesh points are converted from cartesian to geographic system (latitude, longitude and altitude). Altitude coordinates are then interpolated over a (lat,lon) grid where each cell has a resolution of π/128.</p>
 <p>We used the Python package pyshtools (github.com/SHTOOLS) to expand the equally spaced grid into spherical harmonics using Driscoll and Healy’s sampling theorem [1].</p>
 <p>[1] Driscoll, J.R. and D.M. Healy, Computing Fourier transforms and convolutions on the 2-sphere, Adv. Appl. Math., 15, 202-250, 1994.</p>
@@ -213,7 +213,7 @@
 <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">32</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
 
 <span class="c1"># Calculate the spherical harmonics expansion up to order lmax = 2</span>
-<span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">),</span> <span class="p">(</span><span class="n">image_</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">centroid</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span> <span class="o">=</span> <span class="n">shparam</span><span class="o">.</span><span class="n">get_shcoeffs</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">grid_rec</span><span class="p">),</span> <span class="p">(</span><span class="n">image_</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">transform</span><span class="p">)</span> <span class="o">=</span> <span class="n">shparam</span><span class="o">.</span><span class="n">get_shcoeffs</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">lmax</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="c1"># Calculate the corresponding reconstruction error</span>
 <span class="n">mse</span> <span class="o">=</span> <span class="n">shtools</span><span class="o">.</span><span class="n">get_reconstruction_error</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span><span class="n">grid_rec</span><span class="p">)</span>
@@ -223,7 +223,7 @@
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Error:&#39;</span><span class="p">,</span> <span class="n">mse</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The output <code class="docutils literal notranslate"><span class="pre">coeffs</span></code> is a dict that constains the sh coefficients values. <code class="docutils literal notranslate"><span class="pre">grid_rec</span></code> (ndarray) is the reconstructed equally spaced grid. Additional outputs are <code class="docutils literal notranslate"><span class="pre">image_</span></code> (ndarray) that is the input image after pre-processing, <code class="docutils literal notranslate"><span class="pre">mesh</span></code> (ndarray) is a triangular repsentation of <code class="docutils literal notranslate"><span class="pre">image_</span></code> centered at origin, <code class="docutils literal notranslate"><span class="pre">centroid</span></code> is a tuple of floats with the original centroid of the shape and <code class="docutils literal notranslate"><span class="pre">grid</span></code> (ndarray) is the equally spaced grid corresponding to <code class="docutils literal notranslate"><span class="pre">image_</span></code>. The similar <code class="docutils literal notranslate"><span class="pre">grid_rec</span></code> and <code class="docutils literal notranslate"><span class="pre">grid</span></code> are, the betetr the parametrization is.</p>
+<p>The output <code class="docutils literal notranslate"><span class="pre">coeffs</span></code> is a dict that constains the sh coefficients values. <code class="docutils literal notranslate"><span class="pre">grid_rec</span></code> (ndarray) is the reconstructed equally spaced grid. Additional outputs are <code class="docutils literal notranslate"><span class="pre">image_</span></code> (ndarray) that is the input image after pre-processing, <code class="docutils literal notranslate"><span class="pre">mesh</span></code> (ndarray) is a triangular repsentation of <code class="docutils literal notranslate"><span class="pre">image_</span></code> centered at origin, <code class="docutils literal notranslate"><span class="pre">grid</span></code> (ndarray) is the equally spaced grid corresponding to <code class="docutils literal notranslate"><span class="pre">image_</span></code>, and <code class="docutils literal notranslate"><span class="pre">transform</span></code> is a tuple of floats that contains the centroid of the shape and the angle applied for alignment. The similar <code class="docutils literal notranslate"><span class="pre">grid_rec</span></code> and <code class="docutils literal notranslate"><span class="pre">grid</span></code> are, the better the parametrization is.</p>
 <p>To reconstruct the parametrized mesh from <code class="docutils literal notranslate"><span class="pre">grid_rec</span></code> one could do</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reconstruct mesh from grid</span>
 <span class="n">mesh_rec</span> <span class="o">=</span> <span class="n">aicsshparam</span><span class="o">.</span><span class="n">shtools</span><span class="o">.</span><span class="n">get_reconstruction_from_grid</span><span class="p">(</span><span class="n">grid_rec</span><span class="p">)</span>
@@ -284,9 +284,9 @@
       
     </aside>
   </div>
-</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
-    <script src="_static/scripts/furo.js"></script>
+</div><script src="_static/documentation_options.js?v=ca7ad2ea"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=32e29ea5"></script>
     </body>
 </html>
