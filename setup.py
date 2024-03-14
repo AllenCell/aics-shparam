@@ -13,37 +13,36 @@ setup_requirements = [
 ]
 
 test_requirements = [
-    "black>=22.10.0",
-#    "codecov>=2.1.4",
-    "flake8>=3.8.3",
-    "flake8-debugger>=3.2.1",
-    "pytest>=5.4.3",
-    "pytest-cov>=2.9.0",
-    "pytest-raises>=0.11",
+    "black",
+    "flake8",
+    "flake8-debugger",
+    "pytest",
+    "pytest-cov",
+    "pytest-raises",
 ]
 
 dev_requirements = [
     *setup_requirements,
     *test_requirements,
-    "bump2version>=1.0.1",
-    "coverage>=5.1",
-    "ipython>=7.15.0",
-    "m2r2>=0.2.7",
-    "pytest-runner>=5.2",
-    "sphinx>=7.0.1",
-    "furo>=2023.5.20",
-    "tox>=3.15.2",
-    "twine>=3.1.1",
-    "wheel>=0.34.2",
+    "bump2version",
+    "coverage",
+    "ipython",
+    "m2r2",
+    "pytest-runner",
+    "sphinx",
+    "furo",
+    "tox",
+    "twine",
+    "wheel",
 ]
 
 requirements = [
-    'numpy>=1.18.1',
-    'scipy>=1.4.1',
-    'scikit-image>=0.16.2',
-    'scikit-learn>=0.22.1',
-    'vtk>=9.0.1',
-    'pyshtools>=4.9.1'
+    'numpy',
+    'scipy',
+    'scikit-image',
+    'scikit-learn',
+    'vtk',
+    'pyshtools==4.10.4',#4.11+ seems to be broken with Python3.9+
 ]
 
 extra_requirements = {
@@ -60,12 +59,13 @@ setup(
     author="Matheus Viana",
     author_email="matheus.viana@alleninstitute.org",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
-        "Intended Audience :: Developers",
+        "Development Status :: 3 - Beta",
+        "Intended Audience :: Users and Developers",
         "License :: Free for non-commercial use",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
     ],
     description="Spherical harmonics parametrization for 3D starlike shapes",
     install_requires=requirements,
@@ -76,7 +76,7 @@ setup(
     keywords="aicsshparam",
     name="aicsshparam",
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*"]),
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     setup_requires=setup_requirements,
     test_suite="aicsshparam/tests",
     tests_require=test_requirements,
