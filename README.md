@@ -53,7 +53,7 @@ def get_random_3d_shape():
 
 # Compute spherical harmonics coefficients of shape and store them
 # in a pandas dataframe.
-df_coeffs = pd.DataFrame([])
+df_coeffs = []
 for i in range(30):
     # Get a random shape
     label, img = get_random_3d_shape()
@@ -61,7 +61,8 @@ for i in range(30):
     # in total
     (coeffs, _), _ = shparam.get_shcoeffs(image=img, lmax=4)
     coeffs.update({'label': label})
-    df_coeffs = df_coeffs.append(coeffs, ignore_index=True)
+    df_coeffs.append(coeffs)
+df_coeffs = pd.DataFrame(df_coeffs)
 
 # Vizualize the resulting dataframe
 with pd.option_context('display.max_rows', 5, 'display.max_columns', 5):
