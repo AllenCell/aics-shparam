@@ -59,13 +59,11 @@ setup(
     author="Matheus Viana",
     author_email="matheus.viana@alleninstitute.org",
     classifiers=[
-        "Development Status :: 3 - Beta",
-        "Intended Audience :: Users and Developers",
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Science/Research",
         "License :: Free for non-commercial use",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3 :: Only"
     ],
     description="Spherical harmonics parametrization for 3D starlike shapes",
     install_requires=requirements,
