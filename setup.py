@@ -37,6 +37,7 @@ dev_requirements = [
 ]
 
 requirements = [
+    'aicsimageio',
     'numpy',
     'scipy',
     'scikit-image',

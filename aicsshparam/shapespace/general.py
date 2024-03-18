@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from datetime import datetime
 from contextlib import contextmanager
-from cvapipe_analysis.tools import controller
+from . import controller
 
 
 def load_config_file(path: Path="./", fname="config.yaml"):
