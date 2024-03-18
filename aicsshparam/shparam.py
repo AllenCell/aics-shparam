@@ -1,7 +1,7 @@
 import warnings
 import pyshtools
 import numpy as np
-from vtk.util import numpy_support
+from vtkmodules.util import numpy_support
 from skimage import transform as sktrans
 from scipy import interpolate as spinterp
 

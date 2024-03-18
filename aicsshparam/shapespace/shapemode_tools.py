@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from aicsshparam import shtools
-from vtk.util.numpy_support import numpy_to_vtk as np2vtk
-from vtk.util.numpy_support import vtk_to_numpy as vtk2np
+from vtkmodules.util.numpy_support import numpy_to_vtk as np2vtk
+from vtkmodules.util.numpy_support import vtk_to_numpy as vtk2np
 
 from . import io, shapespace, plotting, viz
 

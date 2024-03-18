@@ -6,7 +6,7 @@ from functools import reduce
 from aicsshparam import shtools
 import matplotlib.pyplot as plt
 from matplotlib import animation
-from vtk.util import numpy_support as vtknp
+from vtkmodules.util import numpy_support as vtknp
 
 class MeshToolKit():
 
@@ -110,35 +110,6 @@ class MeshToolKit():
             valids = np.where((points[:,axis] > -2.5)&(points[:,axis] < 2.5))
             coords = points[valids[0]][:,proj]
 
-        # Sorting points clockwise
-        # This has been discussed here:
-        # https://stackoverflow.com/questions/51074984/sorting-according-to-clockwise-point-coordinates/51075469
-        # but seems not to be very efficient. Better version is proposed here:
-        # https://stackoverflow.com/questions/57566806/how-to-arrange-the-huge-list-of-2d-coordinates-in-a-clokwise-direction-in-python
-        center = tuple(
-            map(
-                operator.truediv,
-                reduce(lambda x, y: map(operator.add, x, y), coords),
-                [len(coords)] * 2,
-            )
-        )
-        coords = sorted(
-            coords,
-            key=lambda coord: (
-                -135
-                - math.degrees(
-                    math.atan2(*tuple(map(operator.sub, coord, center))[::-1])
-                )
-            )
-            % 360,
-        )
-
-        # Store sorted coordinates
-        # points[:, proj] = coords
-        return np.array(coords)
-
-    @staticmethod
-    def sort_2d_points(coords):
         # Sorting points clockwise
         # This has been discussed here:
         # https://stackoverflow.com/questions/51074984/sorting-according-to-clockwise-point-coordinates/51075469
