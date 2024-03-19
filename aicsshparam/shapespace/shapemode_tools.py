@@ -6,7 +6,7 @@ from aicsshparam import shtools
 from vtkmodules.util.numpy_support import numpy_to_vtk as np2vtk
 from vtkmodules.util.numpy_support import vtk_to_numpy as vtk2np
 
-from . import io, shapespace, plotting, viz
+from . import io, meshtoolkit, shapespace, plotting
 
 class ShapeModeCalculator(io.DataProducer):
     """
@@ -140,7 +140,7 @@ class ShapeModeCalculator(io.DataProducer):
             for alias in self.control.get_aliases_for_pca():
                 self.meshes[sm][alias] = []
                 for _, row in df_sm.iterrows():
-                    mesh = viz.MeshToolKit.get_mesh_from_series(row, alias, lrec)
+                    mesh = meshtoolkit.get_mesh_from_series(row, alias, lrec)
                     if f'{alias}_dx' in self.df_coeffs.columns:
                         dr_mean = row[[f'{alias}_d{u}' for u in ['x', 'y', 'z']]]
                         mesh = self.translate_mesh_points(mesh, dr_mean.values)
@@ -154,10 +154,10 @@ class ShapeModeCalculator(io.DataProducer):
         swap = self.control.swapxy_on_zproj()
         abs_path_avgshape = self.control.get_staging()/f"shapemode/avgshape"
         for sm, meshes in tqdm(self.meshes.items(), total=len(self.meshes)):
-            projs = viz.MeshToolKit.get_2d_contours(meshes, swap)
+            projs = meshtoolkit.get_2d_contours(meshes, swap)
             for proj, contours in projs.items():
                 fname = f"{abs_path_avgshape}/{sm}_{proj}.gif"
-                viz.MeshToolKit.animate_contours(self.control, contours, save=fname)
+                meshtoolkit.animate_contours(self.control, contours, save=fname)
 
     @staticmethod
     def translate_mesh_points(mesh, r):
