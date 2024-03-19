@@ -1,8 +1,10 @@
+import os
+from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 from typing import Optional
 import matplotlib.pyplot as plt
-from matplotlib import animation
+from matplotlib import animation, colormaps
 from scipy import stats as spstats
 from aicsimageio import AICSImage, writers
 from . import io
@@ -108,7 +110,7 @@ class ShapeSpacePlotMaker(PlotMaker):
     def save_feature_importance(self, space):
         path = f"{self.subfolder}/feature_importance.txt"
         abs_path_txt_file = self.control.get_staging() / path
-        print(abs_path_txt_file)
+        os.makedirs(Path(abs_path_txt_file.parent), exist_ok=True)
         with open(abs_path_txt_file, "w") as flog:
             for col, sm in enumerate(self.control.iter_shape_modes()):
                 exp_var = 100 * space.pca.explained_variance_ratio_[col]
@@ -138,7 +140,7 @@ class ShapeSpacePlotMaker(PlotMaker):
         if nf < 2:
             return
         npts = df.shape[0]
-        cmap = plt.cm.get_cmap("tab10")
+        cmap = colormaps["tab10"]
         prange = []
         for f in df.columns:
             prange.append(np.percentile(df[f].values, [off, 100 - off]))
@@ -297,5 +299,6 @@ class ShapeModePlotMaker(PlotMaker):
         stack = np.concatenate(stack[:], axis=-3)
         stack = np.rollaxis(stack, -1, 1)
         fname = self.control.get_staging() / f"{self.subfolder}/combined.tif"
+        os.makedirs(fname.parent, exist_ok=True)
         writers.ome_tiff_writer.OmeTiffWriter.save(stack, fname, overwrite_file=True, dim_order="CZYX")
         return

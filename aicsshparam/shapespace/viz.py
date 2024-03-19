@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import vtk
 import math
 import operator
@@ -17,20 +19,16 @@ class MeshToolKit():
             for m in range(l + 1):
                 try:
                     # Cosine SHE coefficients
-                    coeffs[0, l, m] = row[
-                        [f for f in row.keys() if f"{alias}_shcoeffs_L{l}M{m}C" in f]
-                    ]
+                    coeffs[0, l, m] = row[f"{alias}_shcoeffs_L{l}M{m}C"]
                     # Sine SHE coefficients
-                    coeffs[1, l, m] = row[
-                        [f for f in row.keys() if f"{alias}_shcoeffs_L{l}M{m}S" in f]
-                    ]
+                    coeffs[1, l, m] = row[f"{alias}_shcoeffs_L{l}M{m}S"]
                 # If a given (l,m) pair is not found, it is assumed to be zero
                 except: pass
         mesh, _ = shtools.get_reconstruction_from_coeffs(coeffs)
         return mesh
 
     @staticmethod
-    def find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection=True):
+    def find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection=False):
 
         # Find axis orthogonal to the projection of interest
         axis = [a for a in [0, 1, 2] if a not in proj][0]
@@ -187,6 +185,7 @@ class MeshToolKit():
             fig, animate, frames=n, interval=100, blit=True
         )
         if save is not None:
+            os.makedirs(Path(save).parent, exist_ok=True)
             anim.save(save, fps=n)
             plt.close("all")
             return

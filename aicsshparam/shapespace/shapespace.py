@@ -1,4 +1,5 @@
 import itertools
+import os
 import numpy as np
 import pandas as pd
 from sklearn.decomposition import PCA
@@ -251,5 +252,7 @@ class ShapeSpace(ShapeSpaceBasic):
         df = df.sort_values(by="structure")
         df = df.set_index(["shape_mode", "structure", "mpId"])
         df = df.unstack(level=-1)
-        df.to_html(self.control.get_staging()/path)
+        filename = self.control.get_staging()/path
+        os.makedirs(filename.parent, exist_ok=True)
+        df.to_html(filename)
         return
