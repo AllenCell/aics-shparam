@@ -28,14 +28,14 @@ class ShapeModeCalculator(io.DataProducer):
     def set_data(self, df):
         self.df = df
 
-    def execute(self):
+    def execute(self, use_vtk_for_intersection=False):
         '''Implements its own execution method bc this step can't
         be framed as a per row calculation.'''
         computed = False
         path_to_output_file = self.get_output_file_name()
         if not path_to_output_file.is_file() or self.control.overwrite():
             try:
-                self.workflow()
+                self.workflow(use_vtk_for_intersection)
                 computed = True
             except Exception as ex:
                 print(f"\n>>>{ex}\n")
@@ -43,7 +43,7 @@ class ShapeModeCalculator(io.DataProducer):
         self.status(None, path_to_output_file, computed)
         return path_to_output_file
         
-    def workflow(self):
+    def workflow(self, use_vtk_for_intersection):
         self.space.execute(self.df)
         self.space.save_summary("shapemode/summary.html")
         self.plot_maker_sp.save_feature_importance(self.space)
@@ -55,7 +55,7 @@ class ShapeModeCalculator(io.DataProducer):
         self.compute_displacement_vector_relative_to_reference()
         print("Generating 3D meshes. This might take some time...")
         self.recontruct_meshes()
-        self.generate_and_save_animated_2d_contours()
+        self.generate_and_save_animated_2d_contours(use_vtk_for_intersection)
         self.plot_maker_sm.combine_and_save_animated_gifs()
         return
 
@@ -150,11 +150,11 @@ class ShapeModeCalculator(io.DataProducer):
                     self.meshes[sm][alias].append(mesh)
         return
 
-    def generate_and_save_animated_2d_contours(self):
+    def generate_and_save_animated_2d_contours(self, use_vtk_for_intersection):
         swap = self.control.swapxy_on_zproj()
         abs_path_avgshape = self.control.get_staging()/f"shapemode/avgshape"
         for sm, meshes in tqdm(self.meshes.items(), total=len(self.meshes)):
-            projs = meshtoolkit.get_2d_contours(meshes, swap)
+            projs = meshtoolkit.get_2d_contours(meshes, swap, use_vtk_for_intersection)
             for proj, contours in projs.items():
                 fname = f"{abs_path_avgshape}/{sm}_{proj}.gif"
                 meshtoolkit.animate_contours(self.control, contours, save=fname)

@@ -24,7 +24,7 @@ def get_mesh_from_series(row, alias, lmax):
     mesh, _ = shtools.get_reconstruction_from_coeffs(coeffs)
     return mesh
 
-def find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection=False):
+def find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection):
 
     # Find axis orthogonal to the projection of interest
     axis = [a for a in [0, 1, 2] if a not in proj][0]
@@ -131,7 +131,7 @@ def find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection=False):
     # points[:, proj] = coords
     return np.array(coords)
 
-def get_2d_contours(named_meshes, swapxy_on_zproj=False):
+def get_2d_contours(named_meshes, use_vtk_for_intersection, swapxy_on_zproj=False):
     contours = {}
     projs = [[0, 1], [0, 2], [1, 2]]
     if swapxy_on_zproj:
@@ -141,7 +141,7 @@ def get_2d_contours(named_meshes, swapxy_on_zproj=False):
         for alias, meshes in named_meshes.items():
             contours[dim][alias] = []
             for mesh in meshes:
-                coords = find_plane_mesh_intersection(mesh, proj)
+                coords = find_plane_mesh_intersection(mesh, proj, use_vtk_for_intersection)
                 if swapxy_on_zproj and dim == 'z':
                     coords = coords[:, ::-1]
                 contours[dim][alias].append(coords)

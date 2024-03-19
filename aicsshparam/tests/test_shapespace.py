@@ -146,7 +146,7 @@ def test_shape_mode_viz():
     control = controller.Controller(config)
     calculator = ShapeModeCalculator(control)
     calculator.set_data(df)
-    calculator.execute()
+    calculator.execute(use_vtk_for_intersection=False)
 
     # ASSERT
     output_directory = config["project"]["local_staging"]
