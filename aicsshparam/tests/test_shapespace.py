@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 import numpy as np
 import pandas as pd
 from aicsshparam.shapespace import controller, shapespace
@@ -136,4 +137,10 @@ def test_shape_mode_viz():
     calculator.execute()
 
     # ASSERT
-    # look for output files
+    directory = config["project"]["local_staging"]
+    assert (directory / "shapemode/pca/explained_variance.png").exists()
+    assert (directory / "shapemode/avgshape/combined.tif").exists()
+    assert (directory / "shapemode/avgshape/NUC_PC8_z.gif").exists()
+
+    # Clean up
+    shutil.rmtree(Path(__file__).parent / "all")
