@@ -1,3 +1,4 @@
+import filecmp
 from pathlib import Path
 import shutil
 import numpy as np
@@ -94,9 +95,11 @@ def assert_NUC_PC_columns_nonzero(df):
         # Since we used gaussian data the result should almost always have no zeros
         assert numzero < 3
 
+DATA_PATH = Path(__file__).parent / "data"
 
 def test_shapespace():
     # ARRANGE
+    np.random.seed(101)
     df = random_shcoeffs_dataframe(nrows=100)
 
     # ACT
@@ -107,10 +110,15 @@ def test_shapespace():
     # ASSERT
     assert len(space.shape_modes) >= 75  # Some outliers filtered out
     assert_NUC_PC_columns_nonzero(space.shape_modes)
+    # Check that output is unchanged
+    expected = pd.read_csv(DATA_PATH / "shape_modes.csv").set_index("Unnamed: 0")
+    expected.index.names = [None]
+    pd.testing.assert_frame_equal(space.shape_modes, expected)
 
 
 def test_shapespace_transform():
     # ARRANGE
+    np.random.seed(101)
     df1 = random_shcoeffs_dataframe()
     df2 = random_shcoeffs_dataframe(nrows=100)
 
@@ -124,10 +132,14 @@ def test_shapespace_transform():
     assert len(result) == 100  # No outliers filtered out
     result_as_df = pd.DataFrame(result, columns=[f"NUC_PC{i}" for i in range(1, 9)])
     assert_NUC_PC_columns_nonzero(result_as_df)
+    # Check that output is unchanged
+    expected = pd.read_csv(DATA_PATH / "transformed.csv").drop(columns=["Unnamed: 0"])
+    pd.testing.assert_frame_equal(result_as_df, expected)
 
 
 def test_shape_mode_viz():
     # ARRANGE
+    np.random.seed(101)
     df = random_shcoeffs_dataframe(nrows=50)
 
     # ACT
@@ -137,10 +149,15 @@ def test_shape_mode_viz():
     calculator.execute()
 
     # ASSERT
-    directory = config["project"]["local_staging"]
-    assert (directory / "shapemode/pca/explained_variance.png").exists()
-    assert (directory / "shapemode/avgshape/combined.tif").exists()
-    assert (directory / "shapemode/avgshape/NUC_PC8_z.gif").exists()
+    output_directory = config["project"]["local_staging"]
+    files = [
+        output_directory / "shapemode/pca/explained_variance.png",
+        output_directory / "shapemode/avgshape/combined.tif",
+        output_directory / "shapemode/avgshape/NUC_PC8_z.gif",
+    ]
+    for file in files:
+        assert file.exists()
+        assert filecmp.cmp(file, DATA_PATH / file.name, shallow=False)
 
-    # Clean up
+    # CLEAN UP
     shutil.rmtree(Path(__file__).parent / "all")
