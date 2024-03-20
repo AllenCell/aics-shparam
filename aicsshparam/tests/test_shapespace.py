@@ -7,60 +7,56 @@ from aicsshparam.shapespace import controller, shapespace
 from aicsshparam.shapespace.shapemode_tools import ShapeModeCalculator
 
 
-config = {
-    "aggregation": {"type": ["avg"]},
-    "appName": "cvapipe_analysis",
-    "data": {
-        "nucleus": {"alias": "NUC", "channel": "dna_segmentation", "color": "#3AADA7"}
+config = controller.Config(
+    project=controller.Project(
+        local_staging=Path(__file__).parent / "all/shape_analysis/shape_space",
+        overwrite=True,
+    ),
+    data={
+        "nucleus": controller.DataDefinition(
+            alias="NUC",
+            channel="dna_segmentation",
+            color="#3AADA7"
+        )
     },
-    "features": {
-        "SHE": {
-            "aliases": ["NUC"],
-            "alignment": {"align": True, "reference": "nucleus", "unique": False},
-            "lmax": 16,
-            "sigma": 2,
-        },
-        "aliases": ["NUC"],
-    },
-    "parameterization": {
-        "inner": "NUC",
-        "number_of_interpolating_points": 32,
-        "outer": "MEM",
-        "parameterize": ["RAWSTR", "STR"],
-    },
-    "preprocessing": {
-        "filtering": {"csv": "", "filter": False, "specs": {}},
-        "remove_mitotics": True,
-        "remove_outliers": True,
-    },
-    "project": {
-        "local_staging": Path(__file__).parent / "all/shape_analysis/shape_space",
-        "overwrite": True,
-    },
-    "shapespace": {
-        "aliases": ["NUC"],
-        "map_points": [-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0],
-        "number_of_shape_modes": 8,
-        "plot": {
-            "frame": False,
-            "limits": [-150, 150, -80, 80],
-            "swapxy_on_zproj": False,
-        },
-        "removal_pct": 0.25,
-        "sorter": "NUC",
-    },
-    "structures": {
+    features=controller.Features(
+        SHE=controller.SphericalHarmonicDefinition(
+            aliases=["NUC"],
+            lmax=16,
+            sigma=2,
+            alignment=controller.SphericalHarmonicAlignment(
+                align=True,
+                reference="nucleus",
+                unique=False
+            ),
+        ),
+        aliases=["NUC"],
+    ),
+    shapespace=controller.ShapeSpace(
+        aliases=["NUC"],
+        map_points=[-2.0, -1.5, -1.0, -0.5, 0.0, 0.5, 1.0, 1.5, 2.0],
+        number_of_shape_modes=8,
+        plot=controller.PlotDefinition(
+            frame=False,  # TODO what is frame for?
+            limits=[-150, 150, -80, 80],
+            swapxy_on_zproj=False,
+        ),
+        removal_pct=0.25,
+        sorter="NUC",
+    ),
+    parameterization=["RAWSTR", "STR"],
+    structures={
         "lamin": [
             "nuclear envelope",
             "#084AE7",
             "{'raw': (475,1700), 'seg': (0,30), 'avgseg': (0,60)}",
         ]
     },
-}
-
+    aggregation="avg",
+)
 
 def random_shcoeffs_dataframe(nrows=100):
-    lmax = config["features"]["SHE"]["lmax"]
+    lmax = config.features.SHE.lmax
     shcoeffs_cols = [
         f"NUC_shcoeffs_L{L}M{m}{suffix}"
         for L in range(1, lmax+1)
@@ -149,7 +145,7 @@ def test_shape_mode_viz():
     calculator.execute(use_vtk_for_intersection=False)
 
     # ASSERT
-    output_directory = config["project"]["local_staging"]
+    output_directory = config.project.local_staging
     files = [
         output_directory / "shapemode/pca/explained_variance.png",
         output_directory / "shapemode/avgshape/combined.tif",

@@ -239,7 +239,7 @@ class ShapeSpace(ShapeSpaceBasic):
     def save_summary(self, path):
         variables = self.control.get_variables_values_for_aggregation()
         df = self.get_aggregated_df(variables)
-        filters = dict((k, df[k].unique()[0]) for k in ["aggtype", "alias"])
+        filters = { k: df[k].unique()[0] for k in ["aggtype", "alias"] }
         for k, v in filters.items():
             df = df.loc[df[k]==v]     
         for index, row in df.iterrows():
