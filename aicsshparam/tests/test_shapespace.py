@@ -45,13 +45,6 @@ config = controller.Config(
         sorter="NUC",
     ),
     parameterization=["RAWSTR", "STR"],
-    structures={
-        "lamin": [
-            "nuclear envelope",
-            "#084AE7",
-            "{'raw': (475,1700), 'seg': (0,30), 'avgseg': (0,60)}",
-        ]
-    },
     aggregation="avg",
 )
 
@@ -71,7 +64,6 @@ def random_shcoeffs_dataframe(nrows=100):
     df["NUC_shcoeffs_L0M0C"] = 5.0  # Each row is mostly spherical
     df["NUC_shape_volume"] = np.random.normal(size=nrows)
     df["NUC_position_depth"] = np.random.normal(size=nrows)
-    df["structure_name"] = "lamin"
     return df
 
 
@@ -147,6 +139,7 @@ def test_shape_mode_viz():
     # ASSERT
     output_directory = config.project.local_staging
     files = [
+        output_directory / "shapemode/summary.html",
         output_directory / "shapemode/pca/explained_variance.png",
         output_directory / "shapemode/avgshape/combined.tif",
         output_directory / "shapemode/avgshape/NUC_PC8_z.gif",

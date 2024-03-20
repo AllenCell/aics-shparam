@@ -1,4 +1,4 @@
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import NewType
 import numpy as np
 import multiprocessing
@@ -64,8 +64,6 @@ class Config:
     features: Features
     shapespace: ShapeSpace
     parameterization: list[Alias]
-    # TODO remove
-    structures: dict[str, list[str]]
     aggregation: str = "avg"
 
 class Controller:
@@ -187,13 +185,7 @@ class Controller:
         variables['mpId'] = self.get_map_point_indexes()
         variables['aggtype'] = self.config['aggregation']
         variables['alias'] = self.config['parameterization']
-        if include_genes:
-            structs = self.config['structures']
-            variables['structure'] = [k for k in structs.keys()]
         return variables
-
-    def get_gene_names(self):
-        return [k for k in self.config['structures'].keys()]
 
     @staticmethod
     def get_ncores():

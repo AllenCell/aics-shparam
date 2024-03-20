@@ -247,10 +247,7 @@ class ShapeSpace(ShapeSpaceBasic):
         df.ncells = df.ncells.astype(int)
         df.mpId -= self.control.get_center_map_point_index()
         df = df.drop(columns=[k for k in filters.keys()]+["CellIds"])
-        genes = self.control.get_gene_names()
-        df.structure = pd.Categorical(df.structure, genes)
-        df = df.sort_values(by="structure")
-        df = df.set_index(["shape_mode", "structure", "mpId"])
+        df = df.set_index(["shape_mode", "mpId"])
         df = df.unstack(level=-1)
         filename = self.control.get_staging()/path
         os.makedirs(filename.parent, exist_ok=True)
