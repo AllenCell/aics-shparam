@@ -352,6 +352,29 @@ image is (C,Z,Y,X) or (Z,Y,X).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="aicsshparam.shtools.convert_coeffs_dict_to_matrix">
+<span class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></span><span class="sig-name descname"><span class="pre">convert_coeffs_dict_to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">32</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#convert_coeffs_dict_to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.convert_coeffs_dict_to_matrix" title="Link to this definition">#</a></dt>
+<dd><p>Convert a dictionary of SH coefficients to a matrix of SH coefficients.
+The dictionary should have keys in the format “shcoeffs_L{L}M{M}{C}” where
+L and M are the degree and order of the coefficient and C is either “C” or “S”
+for cosine or sine coefficients, respectively.
+:Parameters: * <strong>coeffs_dict</strong> (<em>dict</em>) – Dictionary of SH coefficients</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><strong>lmax</strong> (<em>int</em>) – Maximum degree of the SH coefficients</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coeffs</strong> – Matrix of SH coefficients</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="aicsshparam.shtools.get_even_reconstruction_from_coeffs">
 <span class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></span><span class="sig-name descname"><span class="pre">get_even_reconstruction_from_coeffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coeffs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lrec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">npoints</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">512</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#get_even_reconstruction_from_coeffs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.get_even_reconstruction_from_coeffs" title="Link to this definition">#</a></dt>
 <dd><p>Converts a set of spherical harmonic coefficients into
@@ -593,6 +616,54 @@ with new coordinates provided.</p>
 for the updated mesh.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="aicsshparam.shtools.voxelize_mesh">
+<span class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></span><span class="sig-name descname"><span class="pre">voxelize_mesh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">imagedata</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vtkImageData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shape</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mesh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">vtkPolyData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#voxelize_mesh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.voxelize_mesh" title="Link to this definition">#</a></dt>
+<dd><p>Voxelize a triangle mesh into an image.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>imagedata</strong> (<em>vtkImageData</em>) – Imagedata that will be uses as support for voxelization.</p></li>
+<li><p><strong>shape</strong> (<em>tuple</em>) – Shape that imagedata scalars will take after
+voxelization.</p></li>
+<li><p><strong>mesh</strong> (<em>vtkPolyData</em>) – Mesh to be voxelized</p></li>
+<li><p><strong>origin</strong> (<em>List</em>) – xyz specifying the lower left corner of the mesh.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>img</strong> – Binary array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aicsshparam.shtools.voxelize_meshes">
+<span class="sig-prename descclassname"><span class="pre">aicsshparam.shtools.</span></span><span class="sig-name descname"><span class="pre">voxelize_meshes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">meshes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/aicsshparam/shtools.html#voxelize_meshes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#aicsshparam.shtools.voxelize_meshes" title="Link to this definition">#</a></dt>
+<dd><p>List of meshes to be voxelized into an image. Usually
+the input corresponds to the cell membrane and nuclear
+shell meshes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>meshes</strong> (<em>List</em>) – List of vtkPolydatas representing the meshes to
+be voxelized into an image.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>img</strong> (<em>np.array</em>) – 3D image where voxels with value i represent are
+those found in the interior of the i-th mesh in
+the input list. If a voxel is interior to one or
+more meshes form the input list, it will take the
+value of the right most mesh in the list.</p></li>
+<li><p><em>origin</em> – Origin of the meshes in the voxelized image.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="module-aicsshparam">
 <span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-aicsshparam" title="Link to this heading">#</a></h2>
@@ -670,6 +741,7 @@ for the updated mesh.</p>
 <li><a class="reference internal" href="#module-aicsshparam.shtools">aicsshparam.shtools module</a><ul>
 <li><a class="reference internal" href="#aicsshparam.shtools.align_image_2d"><code class="docutils literal notranslate"><span class="pre">align_image_2d()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.apply_image_alignment_2d"><code class="docutils literal notranslate"><span class="pre">apply_image_alignment_2d()</span></code></a></li>
+<li><a class="reference internal" href="#aicsshparam.shtools.convert_coeffs_dict_to_matrix"><code class="docutils literal notranslate"><span class="pre">convert_coeffs_dict_to_matrix()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.get_even_reconstruction_from_coeffs"><code class="docutils literal notranslate"><span class="pre">get_even_reconstruction_from_coeffs()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.get_even_reconstruction_from_grid"><code class="docutils literal notranslate"><span class="pre">get_even_reconstruction_from_grid()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.get_mesh_from_image"><code class="docutils literal notranslate"><span class="pre">get_mesh_from_image()</span></code></a></li>
@@ -679,6 +751,8 @@ for the updated mesh.</p>
 <li><a class="reference internal" href="#aicsshparam.shtools.rotate_image_2d"><code class="docutils literal notranslate"><span class="pre">rotate_image_2d()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.save_polydata"><code class="docutils literal notranslate"><span class="pre">save_polydata()</span></code></a></li>
 <li><a class="reference internal" href="#aicsshparam.shtools.update_mesh_points"><code class="docutils literal notranslate"><span class="pre">update_mesh_points()</span></code></a></li>
+<li><a class="reference internal" href="#aicsshparam.shtools.voxelize_mesh"><code class="docutils literal notranslate"><span class="pre">voxelize_mesh()</span></code></a></li>
+<li><a class="reference internal" href="#aicsshparam.shtools.voxelize_meshes"><code class="docutils literal notranslate"><span class="pre">voxelize_meshes()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-aicsshparam">Module contents</a><ul>
