@@ -1,14 +1,15 @@
 import vtk
 import pyshtools
 import numpy as np
-from typing import Tuple
-from vtk.util import numpy_support
+from typing import Tuple, List
+from scipy import stats as scistats
 from skimage import transform as sktrans
 from skimage import filters as skfilters
 from skimage import morphology as skmorpho
-from sklearn import decomposition as skdecomp
 from scipy import interpolate as sciinterp
-from scipy import stats as scistats
+from vtk.util import numpy_support as vtknp
+from sklearn import decomposition as skdecomp
+
 
 EPS = 1e-12
 
@@ -107,7 +108,7 @@ def get_mesh_from_image(
     img = img.transpose(2, 1, 0)
     img_output = img.copy()
     img = img.flatten()
-    arr = numpy_support.numpy_to_vtk(img, array_type=vtk.VTK_FLOAT)
+    arr = vtknp.numpy_to_vtk(img, array_type=vtk.VTK_FLOAT)
     arr.SetName("Scalar")
     imgdata.GetPointData().SetScalars(arr)
 
@@ -120,13 +121,13 @@ def get_mesh_from_image(
     mesh = cf.GetOutput()
 
     # Calculate the mesh centroid
-    coords = numpy_support.vtk_to_numpy(mesh.GetPoints().GetData())
+    coords = vtknp.vtk_to_numpy(mesh.GetPoints().GetData())
     centroid = coords.mean(axis=0, keepdims=True)
 
     if translate_to_origin is True:
         # Translate to origin
         coords -= centroid
-        mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(coords))
+        mesh.GetPoints().SetData(vtknp.numpy_to_vtk(coords))
 
     return mesh, img_output, tuple(centroid.squeeze())
 
@@ -317,7 +318,7 @@ def update_mesh_points(
     for the updated mesh.
     """
 
-    mesh.GetPoints().SetData(numpy_support.numpy_to_vtk(np.c_[x_new, y_new, z_new]))
+    mesh.GetPoints().SetData(vtknp.numpy_to_vtk(np.c_[x_new, y_new, z_new]))
     mesh.Modified()
 
     # Fix normal vectors orientation
@@ -648,3 +649,138 @@ def save_polydata(mesh: vtk.vtkPolyData, filename: str):
     writer.SetInputData(mesh)
     writer.SetFileName(filename)
     writer.Write()
+
+
+def convert_coeffs_dict_to_matrix(coeffs_dict, lmax=32):
+    """
+    Convert a dictionary of SH coefficients to a matrix of SH coefficients.
+    The dictionary should have keys in the format "shcoeffs_L{L}M{M}{C}" where
+    L and M are the degree and order of the coefficient and C is either "C" or "S"
+    for cosine or sine coefficients, respectively.
+    Parameters
+    ----------
+    coeffs_dict : dict
+        Dictionary of SH coefficients
+    lmax : int
+        Maximum degree of the SH coefficients
+    Returns
+    -------
+    coeffs : np.array
+        Matrix of SH coefficients
+    """
+    coeffs = np.zeros((2, lmax + 1, lmax + 1), dtype=np.float32)
+    for L in range(lmax):
+        for M in range(L + 1):
+            for cid, C in enumerate(["C", "S"]):
+                coeffs[cid, L, M] = coeffs_dict[f"shcoeffs_L{L}M{M}{C}"]
+    return coeffs
+
+
+def voxelize_mesh(
+    imagedata: vtk.vtkImageData, shape: Tuple, mesh: vtk.vtkPolyData, origin: List
+):
+    """
+    Voxelize a triangle mesh into an image.
+
+    Parameters
+    --------------------
+    imagedata: vtkImageData
+        Imagedata that will be uses as support for voxelization.
+    shape: tuple
+        Shape that imagedata scalars will take after
+        voxelization.
+    mesh: vtkPolyData
+        Mesh to be voxelized
+    origin: List
+        xyz specifying the lower left corner of the mesh.
+
+    Returns
+    -------
+    img: np.array
+        Binary array.
+    """
+
+    pol2stenc = vtk.vtkPolyDataToImageStencil()
+    pol2stenc.SetInputData(mesh)
+    pol2stenc.SetOutputOrigin(origin)
+    pol2stenc.SetOutputWholeExtent(imagedata.GetExtent())
+    pol2stenc.Update()
+
+    imgstenc = vtk.vtkImageStencil()
+    imgstenc.SetInputData(imagedata)
+    imgstenc.SetStencilConnection(pol2stenc.GetOutputPort())
+    imgstenc.ReverseStencilOff()
+    imgstenc.SetBackgroundValue(0)
+    imgstenc.Update()
+
+    # Convert scalars from vtkImageData back to numpy
+    scalars = imgstenc.GetOutput().GetPointData().GetScalars()
+    img = vtknp.vtk_to_numpy(scalars).reshape(shape)
+
+    return img
+
+
+def voxelize_meshes(meshes: List):
+    """
+    List of meshes to be voxelized into an image. Usually
+    the input corresponds to the cell membrane and nuclear
+    shell meshes.
+
+    Parameters
+    --------------------
+    meshes: List
+        List of vtkPolydatas representing the meshes to
+        be voxelized into an image.
+    Returns
+    -------
+    img: np.array
+        3D image where voxels with value i represent are
+        those found in the interior of the i-th mesh in
+        the input list. If a voxel is interior to one or
+        more meshes form the input list, it will take the
+        value of the right most mesh in the list.
+    origin:
+        Origin of the meshes in the voxelized image.
+    """
+
+    # 1st mesh is used as reference (cell) and it should be
+    # the larger than the 2nd one (nucleus).
+    mesh = meshes[0]
+
+    # Find mesh coordinates
+    coords = vtknp.vtk_to_numpy(mesh.GetPoints().GetData())
+
+    # Find bounds of the mesh
+    rmin = (coords.min(axis=0) - 0.5).astype(int)
+    rmax = (coords.max(axis=0) + 0.5).astype(int)
+
+    # Width, height and depth
+    w = int(2 + (rmax[0] - rmin[0]))
+    h = int(2 + (rmax[1] - rmin[1]))
+    d = int(2 + (rmax[2] - rmin[2]))
+
+    # Create image data
+    imagedata = vtk.vtkImageData()
+    imagedata.SetDimensions([w, h, d])
+    imagedata.SetExtent(0, w - 1, 0, h - 1, 0, d - 1)
+    imagedata.SetOrigin(rmin)
+    imagedata.AllocateScalars(vtk.VTK_UNSIGNED_CHAR, 1)
+
+    # Set all values to 1
+    imagedata.GetPointData().GetScalars().FillComponent(0, 1)
+
+    # Create an empty 3D numpy array to sum up
+    # voxelization of all meshes
+    img = np.zeros((d, h, w), dtype=np.uint8)
+
+    # Voxelize one mesh at the time
+    for mid, mesh in enumerate(meshes):
+        seg = voxelize_mesh(
+            imagedata=imagedata, shape=(d, h, w), mesh=mesh, origin=rmin
+        )
+        img[seg > 0] = mid + 1
+
+    # Origin of the reference system in the image
+    origin = rmin.reshape(1, 3)
+
+    return img, origin
