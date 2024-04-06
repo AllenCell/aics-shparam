@@ -10,7 +10,9 @@ from scipy import interpolate as sciinterp
 from vtk.util import numpy_support as vtknp
 from sklearn import decomposition as skdecomp
 
+
 EPS = 1e-12
+
 
 def get_mesh_from_image(
     image: np.array,
@@ -648,6 +650,7 @@ def save_polydata(mesh: vtk.vtkPolyData, filename: str):
     writer.SetFileName(filename)
     writer.Write()
 
+
 def convert_coeffs_dict_to_matrix(coeffs_dict, lmax=32):
     """
     Convert a dictionary of SH coefficients to a matrix of SH coefficients.
@@ -665,12 +668,13 @@ def convert_coeffs_dict_to_matrix(coeffs_dict, lmax=32):
     coeffs : np.array
         Matrix of SH coefficients
     """
-    coeffs = np.zeros((2, lmax+1, lmax+1), dtype=np.float32)
+    coeffs = np.zeros((2, lmax + 1, lmax + 1), dtype=np.float32)
     for L in range(lmax):
-        for M in range(L+1):
+        for M in range(L + 1):
             for cid, C in enumerate(["C", "S"]):
                 coeffs[cid, L, M] = coeffs_dict[f"shcoeffs_L{L}M{M}{C}"]
     return coeffs
+
 
 def voxelize_mesh(
     imagedata: vtk.vtkImageData, shape: Tuple, mesh: vtk.vtkPolyData, origin: List
@@ -780,5 +784,3 @@ def voxelize_meshes(meshes: List):
     origin = rmin.reshape(1, 3)
 
     return img, origin
-
-
