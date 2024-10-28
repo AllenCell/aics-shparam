@@ -42,7 +42,7 @@ requirements = [
     'scikit-image',
     'scikit-learn',
     'vtk',
-    'pyshtools==4.10.4',#4.11+ seems to be broken with Python3.9+
+    'pyshtools',
 ]
 
 extra_requirements = {
