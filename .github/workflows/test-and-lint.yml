@@ -26,11 +26,14 @@ jobs:
         if: matrix.python-version == '3.13'
         uses: s-weigand/setup-conda@v1
         with:
+          auto-activate-base: true
+          activate-environment: ""  
           python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
           channels: conda-forge
+
 
       - name: Install Build Dependencies for Python 3.13
         if: matrix.python-version == '3.13'
@@ -73,11 +76,14 @@ jobs:
         if: matrix.python-version == '3.13'
         uses: s-weigand/setup-conda@v1
         with:
+          auto-activate-base: true
+          activate-environment: ""  
           python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
           channels: conda-forge
+
 
       - name: Install Build Dependencies for Python 3.13
         if: matrix.python-version == '3.13'
