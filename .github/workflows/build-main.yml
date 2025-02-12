@@ -32,8 +32,8 @@ jobs:
         with:
           python-version: 3.13
           auto-update-conda: true
-          activate-environment: build-env
-          environment-file: environment.yml
+          # activate-environment: build-env
+          # environment-file: environment.yml
           channels: conda-forge
 
       - name: Install Build Dependencies for Python 3.13
@@ -78,8 +78,8 @@ jobs:
         with:
           python-version: 3.13
           auto-update-conda: true
-          activate-environment: build-env
-          environment-file: environment.yml
+          # activate-environment: build-env
+          # environment-file: environment.yml
           channels: conda-forge
 
       - name: Install Build Dependencies for Python 3.13
