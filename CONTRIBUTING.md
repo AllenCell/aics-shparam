@@ -51,7 +51,7 @@ Ready to contribute? Here's how to set up `aicsshparam` for local development.
 ## Deploying
 
 A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed.
+Make sure all your changes are committed. (Refer to [bump2version on PyPI](https://pypi.org/project/bump2version/) for more details.)
 Then run:
 
 ```bash
