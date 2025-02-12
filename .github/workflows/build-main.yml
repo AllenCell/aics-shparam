@@ -40,7 +40,7 @@ jobs:
         if: matrix.python-version == '3.13'
         run: |
           conda install -c conda-forge fftw openblas cmake pkg-config
-          conda deactivate  # Deactivate if necessary
+        #  conda deactivate  # Deactivate if necessary
 
       # Install Python dependencies
       - name: Install Dependencies
@@ -86,7 +86,7 @@ jobs:
         if: matrix.python-version == '3.13'
         run: |
           conda install -c conda-forge fftw openblas cmake pkg-config
-          conda deactivate  # Deactivate if necessary
+        #  conda deactivate  # Deactivate if necessary
 
       - name: Install Dependencies
         run: |
