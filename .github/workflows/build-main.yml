@@ -15,74 +15,80 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11","3.12","3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[test]
-    - name: Test with pytest
-      run: |
-        pytest --cov-report xml --cov=aicsshparam aicsshparam/tests/
-    - name: Upload codecov
-      uses: codecov/codecov-action@v1
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[test]
+
+      - name: Test with pytest
+        run: |
+          pytest --cov-report xml --cov=aicsshparam aicsshparam/tests/
+
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v3
 
   lint:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python
-      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
-      with:
-        python-version: ["3.9", "3.10", "3.11","3.12","3.13"]
-        # python-version: 3.9
-        # python-version: 3.10
-        # python-version: 3.11
-        # python-version: 3.12
-        # python-version: 3.13
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install .[test]
-    - name: Lint with flake8
-      run: |
-        flake8 aicsshparam --count --verbose --show-source --statistics
-    - name: Check with black
-      run: |
-        black --check aicsshparam
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .[test]
+
+      - name: Lint with Flake8
+        run: |
+          flake8 aicsshparam --count --verbose --show-source --statistics
+
+      - name: Check with Black
+        run: |
+          black --check aicsshparam
 
   publish:
-    if: "contains(github.event.head_commit.message, 'Bump version')"
+    if: contains(github.event.head_commit.message, 'Bump version')
     needs: [test, lint]
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - name: Set up Python
-      uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c
-      with:
-        python-version: 3.9
-        python-version: 3.10
-        python-version: 3.11
-        python-version: 3.12
-        python-version: 3.13
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools wheel
-    - name: Build Package
-      run: |
-        python setup.py sdist bdist_wheel
-    - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_TOKEN }}
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'  
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install setuptools wheel
+
+      - name: Build Package
+        run: |
+          python setup.py sdist bdist_wheel
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.4.2
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
