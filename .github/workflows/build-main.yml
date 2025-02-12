@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13.2"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -25,19 +25,19 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # **Set up Conda and install dependencies only for Python 3.13.2**
-      - name: Set up Conda for Python 3.13.2
-        if: matrix.python-version == '3.13.2'
-        uses: conda-incubator/setup-miniconda@v3
+      # **Set up Conda and install dependencies only for Python 3.13**
+      - name: Set up Conda for Python 3.13
+        if: matrix.python-version == '3.13'
+        uses: setup-conda@v1
         with:
-          python-version: 3.13.2
+          python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
           channels: conda-forge
 
-      - name: Install Build Dependencies for Python 3.13.2
-        if: matrix.python-version == '3.13.2'
+      - name: Install Build Dependencies for Python 3.13
+        if: matrix.python-version == '3.13'
         run: |
           conda install -c conda-forge fftw openblas cmake pkg-config
         #  conda deactivate  # Deactivate if necessary
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13.2"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
       - uses: actions/checkout@v3
@@ -71,19 +71,19 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # **Set up Conda and install dependencies only for Python 3.13.2**
-      - name: Set up Conda for Python 3.13.2
-        if: matrix.python-version == '3.13.2'
-        uses: conda-incubator/setup-miniconda@v3
+      # **Set up Conda and install dependencies only for Python 3.13**
+      - name: Set up Conda for Python 3.13
+        if: matrix.python-version == '3.13'
+        uses: setup-conda@v1
         with:
-          python-version: 3.13.2
+          python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
           channels: conda-forge
 
-      - name: Install Build Dependencies for Python 3.13.2
-        if: matrix.python-version == '3.13.2'
+      - name: Install Build Dependencies for Python 3.13
+        if: matrix.python-version == '3.13'
         run: |
           conda install -c conda-forge fftw openblas cmake pkg-config
           conda deactivate  # Deactivate if necessary
