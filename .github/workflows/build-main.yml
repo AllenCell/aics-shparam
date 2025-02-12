@@ -13,7 +13,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13.2"]
         os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
@@ -27,10 +27,10 @@ jobs:
 
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.13.2'
         uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.13
+          python-version: 3.13.2
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13.2"]
 
     steps:
       - uses: actions/checkout@v3
@@ -73,10 +73,10 @@ jobs:
 
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
-        if: matrix.python-version == '3.13'
+        if: matrix.python-version == '3.13.2'
         uses: conda-incubator/setup-miniconda@v3
         with:
-          python-version: 3.13
+          python-version: 3.13.2
           auto-update-conda: true
           # activate-environment: build-env
           # environment-file: environment.yml
