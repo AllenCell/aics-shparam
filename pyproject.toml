@@ -95,7 +95,16 @@ all = [
 
 [tool.setuptools]
 include-package-data = true
-py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+# Exclude the 'tests' and 'bin' directories within the main package
+exclude = [
+    "aicsshparam.tests",
+    "aicsshparam.tests.*",
+    "aicsshparam.bin",
+    "aicsshparam.bin.*"
+]
 
 # # Configuration for bump2version
 # [tool.bumpversion]
