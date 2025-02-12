@@ -28,7 +28,7 @@ jobs:
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
         if: matrix.python-version == '3.13'
-        uses: setup-conda@v1
+        uses: s-weigand/setup-conda@v1
         with:
           python-version: 3.13
           auto-update-conda: true
@@ -74,7 +74,7 @@ jobs:
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
         if: matrix.python-version == '3.13'
-        uses: setup-conda@v1
+        uses: s-weigand/setup-conda@v1
         with:
           python-version: 3.13
           auto-update-conda: true
