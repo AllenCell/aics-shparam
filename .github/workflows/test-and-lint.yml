@@ -24,7 +24,7 @@ jobs:
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
         if: matrix.python-version == '3.13'
-        uses: s-weigand/setup-conda@v1
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
           activate-environment: ""  
@@ -74,7 +74,7 @@ jobs:
       # **Set up Conda and install dependencies only for Python 3.13**
       - name: Set up Conda for Python 3.13
         if: matrix.python-version == '3.13'
-        uses: s-weigand/setup-conda@v1
+        uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
           activate-environment: ""  
