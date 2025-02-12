@@ -31,7 +31,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
-          activate-environment: ""  
+          activate-environment: true  
           python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
@@ -80,7 +80,7 @@ jobs:
         uses: conda-incubator/setup-miniconda@v3
         with:
           auto-activate-base: true
-          activate-environment: ""  
+          activate-environment: true  
           python-version: 3.13
           auto-update-conda: true
           # activate-environment: build-env
