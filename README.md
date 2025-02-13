@@ -9,6 +9,21 @@
 
 ## Installation:
 
+## Build Dependencies for Python 3.13.*
+
+If you are using Python 3.13.*, you will need to install the following build dependencies:
+
+- **fftw**
+- **openblas**
+- **cmake**
+- **pkg-config**
+
+One convenient way to install these dependencies is by using Conda. You can run the following command:
+
+```bash
+conda install -c conda-forge fftw openblas cmake pkg-config
+```
+
 **Stable Release**: `pip install aicsshparam`
 
 **Build from source to make customization**:

@@ -1,0 +1,131 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "bump2version>=0.5.3" 
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aicsshparam"
+version = "0.1.11"
+description = "Spherical harmonics parametrization for 3D starlike shapes"
+authors = [{ name = "Matheus Viana", email = "matheus.viana@alleninstitute.org" }]
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">= 3.9"
+keywords = ["aicsshparam"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: Free for non-commercial use",
+    "Natural Language :: English",
+    "Programming Language :: Python :: 3"
+]
+dependencies = [
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "scikit-learn",
+    "vtk",
+    "pyshtools"
+]
+
+[project.optional-dependencies]
+setup = [
+    "pytest-runner>=5.2"
+]
+test = [
+    "black",
+    "flake8",
+    "flake8-debugger",
+    "pytest",
+    "pytest-cov",
+    "pytest-raises"
+]
+dev = [
+    "pytest-runner>=5.2",
+    "black",
+    "flake8",
+    "flake8-debugger",
+    "pytest",
+    "pytest-cov",
+    "pytest-raises",
+    "bump2version",
+    "coverage",
+    "ipython",
+    "m2r2",
+    "sphinx",
+    "furo",
+    "tox",
+    "twine",
+    "wheel"
+]
+all = [
+    # Base dependencies
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "scikit-learn",
+    "vtk",
+    "pyshtools",
+    # Setup dependencies
+    "pytest-runner>=5.2",
+    # Test dependencies
+    "black",
+    "flake8",
+    "flake8-debugger",
+    "pytest",
+    "pytest-cov",
+    "pytest-raises",
+    # Dev dependencies
+    "bump2version",
+    "coverage",
+    "ipython",
+    "m2r2",
+    "sphinx",
+    "furo",
+    "tox",
+    "twine",
+    "wheel"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/AllenCell/aics-shparam"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+# Exclude the 'tests' and 'bin' directories within the main package
+exclude = [
+    "aicsshparam.tests",
+    "aicsshparam.tests.*",
+    "aicsshparam.bin",
+    "aicsshparam.bin.*"
+]
+
+# # Configuration for bump2version
+# [tool.bumpversion]
+# current_version = "0.2.1"
+# commit = true
+# tag = true
+
+# [bumpversion:file:pyproject.toml]
+# search = version = "{current_version}"
+# replace = version = "{new_version}"
+
+# [[bumpversion.file]]
+# path = "aicsshparam/__init__.py"
+# search = "{current_version}"
+# replace = "{new_version}"
+
+# # Flake8 configuration
+# [tool.flake8]
+# exclude = ["docs/"]
+# ignore = ["E203", "E402", "W291", "W503"]
+# max-line-length = 88
+
+# [aliases]
+# test = "pytest"

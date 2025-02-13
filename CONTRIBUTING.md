@@ -51,13 +51,30 @@ Ready to contribute? Here's how to set up `aicsshparam` for local development.
 ## Deploying
 
 A reminder for the maintainers on how to deploy.
-Make sure all your changes are committed.
-Then run:
 
+1. **Ensure all changes are committed.**  
+   Refer to [bump2version on PyPI](https://pypi.org/project/bump2version/) for more details on versioning.
+
+2. **Bump the version number.**  
+   Run one of the following commands depending on the type of version update:
+   ```bash
+   bump2version major # for major releases with breaking changes
+   bump2version minor # for minor releases with new features
+   bump2version patch # for patch releases with bug fixes
+   ```
+
+3. **Push the changes and tags to the repository.**
+   ```bash
+   git push
+   git push --tags
+   ```
+
+---
+
+**Note:**  
+Sometimes, you might encounter situations where there are uncommitted changes or modifications in your working directory that you intend to include in the release. In such cases, you can use the `--allow-dirty` flag with `bump2version` to permit version bumping even when the working directory isn't clean:
 ```bash
-bump2version patch # possible: major / minor / patch
-git push
-git push --tags
+bump2version patch --allow-dirty
 ```
 
 This will release a new package version on Git + GitHub and publish to PyPI.
