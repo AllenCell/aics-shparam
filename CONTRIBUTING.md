@@ -12,13 +12,13 @@ Ready to contribute? Here's how to set up `aicsshparam` for local development.
 2. Clone your fork locally:
 
     ```bash
-    git clone git@github.com:{your_name_here}/aicsshparam.git
+    git clone git@github.com:{your_name_here}/aics-shparam.git
     ```
 
 3. Install the project in editable mode. (It is also recommended to work in a virtualenv or anaconda environment):
 
     ```bash
-    cd aicsshparam/
+    cd src/aicsshparam/
     pip install -e .[dev]
     ```
 
@@ -53,14 +53,14 @@ Ready to contribute? Here's how to set up `aicsshparam` for local development.
 A reminder for the maintainers on how to deploy.
 
 1. **Ensure all changes are committed.**  
-   Refer to [bump2version on PyPI](https://pypi.org/project/bump2version/) for more details on versioning.
+   Refer to [bump-my-version on PyPI](https://pypi.org/project/bump-my-version/0.9.1/) for more details on versioning.
 
 2. **Bump the version number.**  
    Run one of the following commands depending on the type of version update:
    ```bash
-   bump2version major # for major releases with breaking changes
-   bump2version minor # for minor releases with new features
-   bump2version patch # for patch releases with bug fixes
+   bump-my-version major # for major releases with breaking changes
+   bump-my-version minor # for minor releases with new features
+   bump-my-version patch # for patch releases with bug fixes
    ```
 
 3. **Push the changes and tags to the repository.**
@@ -71,10 +71,4 @@ A reminder for the maintainers on how to deploy.
 
 ---
 
-**Note:**  
-Sometimes, you might encounter situations where there are uncommitted changes or modifications in your working directory that you intend to include in the release. In such cases, you can use the `--allow-dirty` flag with `bump2version` to permit version bumping even when the working directory isn't clean:
-```bash
-bump2version patch --allow-dirty
-```
-
-This will release a new package version on Git + GitHub and publish to PyPI.
+This will release a new package version on Git and GitHub. When your commit message includes "Bump version," it triggers a GitHub Action that automatically publishes the package to PyPI!

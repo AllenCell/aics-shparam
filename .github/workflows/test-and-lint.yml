@@ -28,7 +28,7 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest aicsshparam/tests/
+          pytest src/aicsshparam/tests/
 
       - name: Upload Code Coverage
         uses: codecov/codecov-action@v3
@@ -37,18 +37,15 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.12
           cache: 'pip'
 
       - name: Install Dependencies
@@ -58,8 +55,8 @@ jobs:
 
       - name: Lint with Flake8
         run: |
-          flake8 aicsshparam --count --verbose --show-source --statistics
+          flake8p src/aicsshparam --count --verbose --show-source --statistics
 
       - name: Check with Black
         run: |
-          black --check aicsshparam
+          black --check src/aicsshparam

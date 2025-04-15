@@ -18,13 +18,15 @@ If you are using Python 3.13.*, you will need to install the following build dep
 - **cmake**
 - **pkg-config**
 
-One convenient way to install these dependencies is by using Conda. You can run the following command:
+If you are using conda, you can run the following command to install these dependencies:
 
 ```bash
 conda install -c conda-forge fftw openblas cmake pkg-config
 ```
 
 **Stable Release**: `pip install aicsshparam`
+
+For `pdm` users, follow [these installation steps instead](./pdm_installation.md).
 
 **Build from source to make customization**:
 
