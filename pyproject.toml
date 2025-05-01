@@ -1,10 +1,6 @@
 [build-system]
-requires = [
-    "setuptools>=42",
-    "wheel",
-    "bump2version>=0.5.3" 
-]
-build-backend = "setuptools.build_meta"
+requires = ["pdm-backend", "wheel"]
+build-backend = "pdm.backend"
 
 [project]
 name = "aicsshparam"
@@ -13,7 +9,7 @@ description = "Spherical harmonics parametrization for 3D starlike shapes"
 authors = [{ name = "Matheus Viana", email = "matheus.viana@alleninstitute.org" }]
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">= 3.9"
+requires-python = ">=3.9"
 keywords = ["aicsshparam"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -28,7 +24,7 @@ dependencies = [
     "scikit-image",
     "scikit-learn",
     "vtk",
-    "pyshtools"
+    "pyshtools>=4.13.1"
 ]
 
 [project.optional-dependencies]
@@ -37,6 +33,7 @@ setup = [
 ]
 test = [
     "black",
+    "Flake8-pyproject",
     "flake8",
     "flake8-debugger",
     "pytest",
@@ -46,12 +43,13 @@ test = [
 dev = [
     "pytest-runner>=5.2",
     "black",
+    "Flake8-pyproject",
     "flake8",
     "flake8-debugger",
     "pytest",
     "pytest-cov",
     "pytest-raises",
-    "bump2version",
+    "bump-my-version",
     "coverage",
     "ipython",
     "myst-parser",
@@ -62,24 +60,15 @@ dev = [
     "wheel"
 ]
 all = [
-    # Base dependencies
-    "numpy",
-    "scipy",
-    "scikit-image",
-    "scikit-learn",
-    "vtk",
-    "pyshtools",
-    # Setup dependencies
     "pytest-runner>=5.2",
-    # Test dependencies
     "black",
+    "Flake8-pyproject",
     "flake8",
     "flake8-debugger",
     "pytest",
     "pytest-cov",
     "pytest-raises",
-    # Dev dependencies
-    "bump2version",
+    "bump-my-version",
     "coverage",
     "ipython",
     "myst-parser",
@@ -98,7 +87,6 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-# Exclude the 'tests' and 'bin' directories within the main package
 exclude = [
     "aicsshparam.tests",
     "aicsshparam.tests.*",
@@ -106,26 +94,35 @@ exclude = [
     "aicsshparam.bin.*"
 ]
 
-# # Configuration for bump2version
-# [tool.bumpversion]
-# current_version = "0.2.1"
-# commit = true
-# tag = true
+[tool.pdm]
+distribution = true
 
-# [bumpversion:file:pyproject.toml]
-# search = version = "{current_version}"
-# replace = version = "{new_version}"
+[tool.bumpversion]
+commit = true
+tag = true
+current_version = "0.1.11"
+message = "Bump version: {current_version} → {new_version}"
 
-# [[bumpversion.file]]
-# path = "aicsshparam/__init__.py"
-# search = "{current_version}"
-# replace = "{new_version}"
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
 
-# # Flake8 configuration
-# [tool.flake8]
-# exclude = ["docs/"]
-# ignore = ["E203", "E402", "W291", "W503"]
-# max-line-length = 88
+[[tool.bumpversion.files]]
+filename = "src/aicsshparam/__init__.py"
+search = '{current_version}'
+replace = '{new_version}'
 
-# [aliases]
-# test = "pytest"
+[tool.setuptools.bdist_wheel]
+universal = true
+
+[tool.setuptools.aliases]
+test = "pytest"
+
+[tool.flake8]
+exclude = ["docs/"]
+ignore = ["E203", "E402", "W291", "W503"]
+max-line-length = 88
+
+[tool.pytest.ini_options]
+collect_ignore = ["pyproject.toml"]

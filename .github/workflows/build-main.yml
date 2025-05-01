@@ -36,7 +36,7 @@ jobs:
       # Run Pytest with coverage
       - name: Test with pytest
         run: |
-          pytest --cov-report xml --cov=aicsshparam aicsshparam/tests/
+          pytest --cov-report xml --cov=aicsshparam src/aicsshparam/tests/
 
       # Upload Code Coverage
       - name: Upload Code Coverage
@@ -44,17 +44,14 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.12
 
       - name: Install Dependencies
         run: |
@@ -63,11 +60,11 @@ jobs:
 
       - name: Lint with Flake8
         run: |
-          flake8 aicsshparam --count --verbose --show-source --statistics
+          flake8p src/aicsshparam --count --verbose --show-source --statistics
 
       - name: Check with Black
         run: |
-          black --check aicsshparam
+          black --check src/aicsshparam
 
   publish:
     if: contains(github.event.head_commit.message, 'Bump version')
@@ -80,7 +77,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'  
+          python-version: 3.12  
           
       - name: Install Dependencies
         run: |
