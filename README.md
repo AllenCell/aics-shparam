@@ -9,9 +9,9 @@
 
 ## Installation:
 
-## Build Dependencies for Python 3.13.*
+## Build Dependencies for Python
 
-If you are using Python 3.13.*, you will need to install the following build dependencies:
+If you are using Python 3.13.* (and in some cases for earlier versions), you will need to install the following build dependencies:
 
 - **fftw**
 - **openblas**
