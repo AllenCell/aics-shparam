@@ -17,21 +17,21 @@ aicsshparam.shparam module
 
 .. automodule:: aicsshparam.shparam
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 aicsshparam.shtools module
 --------------------------
 
 .. automodule:: aicsshparam.shtools
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: aicsshparam
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
