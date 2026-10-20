@@ -1,4 +1,5 @@
 import vtk
+import warnings
 import pyshtools
 import numpy as np
 from typing import Tuple, List
@@ -9,7 +10,6 @@ from skimage import morphology as skmorpho
 from scipy import interpolate as sciinterp
 from vtk.util import numpy_support as vtknp
 from sklearn import decomposition as skdecomp
-
 
 EPS = 1e-12
 
@@ -132,6 +132,150 @@ def get_mesh_from_image(
     return mesh, img_output, tuple(centroid.squeeze())
 
 
+def get_mesh_from_vertices_faces(
+    vertices: np.array,
+    faces: np.array,
+    translate_to_origin: bool = True,
+):
+    """Build a triangular vtkPolyData mesh from arrays of vertices and
+    faces.
+
+    This is a convenience helper for users who have a surface mesh as raw
+    numpy arrays rather than as a vtkPolyData object, so they can feed it
+    to the mesh-based spherical harmonics parametrization.
+
+    Parameters
+    ----------
+    vertices : np.array
+        Array of vertex coordinates with shape (N, 3).
+    faces : np.array
+        Array of triangular faces with shape (M, 3), where each row holds
+        the three vertex indices of a triangle.
+    translate_to_origin : bool, optional
+        Whether or not to translate the mesh so its centroid sits at the
+        origin (0, 0, 0), default is True.
+
+    Returns
+    -------
+    mesh : vtkPolyData
+        3d mesh in VTK format.
+    """
+
+    vertices = np.asarray(vertices)
+    faces = np.asarray(faces)
+
+    # Hard errors: input that cannot be turned into a usable mesh.
+    if vertices.ndim != 2 or vertices.shape[1] != 3:
+        raise ValueError(f"Invalid vertices shape {vertices.shape}. Expected (N, 3).")
+    if vertices.shape[0] == 0:
+        raise ValueError("No vertices found. Is the input mesh empty?")
+    if not np.isfinite(vertices).all():
+        raise ValueError("Vertices contain non-finite values (NaN or inf).")
+    if faces.ndim != 2 or faces.shape[1] != 3:
+        raise ValueError(
+            f"Invalid faces shape {faces.shape}. Expected (M, 3) triangular faces."
+        )
+    if faces.shape[0] == 0:
+        raise ValueError("No faces found. Is the input mesh empty?")
+    if faces.min() < 0 or faces.max() >= vertices.shape[0]:
+        raise ValueError("Face indices are out of range for the provided vertices.")
+
+    points = vtk.vtkPoints()
+    points.SetData(vtknp.numpy_to_vtk(vertices.astype(float), deep=True))
+
+    cells = vtk.vtkCellArray()
+    for face in faces.astype(np.int64):
+        cells.InsertNextCell(3)
+        for idx in face:
+            cells.InsertCellPoint(int(idx))
+
+    mesh = vtk.vtkPolyData()
+    mesh.SetPoints(points)
+    mesh.SetPolys(cells)
+
+    if translate_to_origin is True:
+        coords = vtknp.vtk_to_numpy(mesh.GetPoints().GetData())
+        centroid = coords.mean(axis=0, keepdims=True)
+        coords = coords - centroid
+        mesh.GetPoints().SetData(vtknp.numpy_to_vtk(coords, deep=True))
+
+    return mesh
+
+
+def check_mesh_for_parametrization(mesh: vtk.vtkPolyData):
+    """Warn (without raising) when an input mesh violates the geometric
+    assumptions of the spherical harmonics parametrization.
+
+    The parametrization represents the surface as a single radius per
+    direction r(lon, lat), which is only valid for a closed surface that
+    is star-shaped about its centroid. This function emits warnings for
+    the two cheap, mesh-native proxies of those assumptions; it never
+    raises, matching the library's tolerance for slightly imperfect
+    meshes.
+
+    Parameters
+    ----------
+    mesh : vtkPolyData
+        Surface mesh to check.
+
+    Notes
+    -----
+    - Watertightness is checked first with vtkFeatureEdges (counting
+      boundary and non-manifold edges) because the enclosed-point test
+      below is only meaningful on a closed surface.
+    - The centroid-inside test uses vtkSelectEnclosedPoints and is a
+      necessary-but-not-sufficient proxy for the star-shaped assumption.
+    """
+
+    # Merge coincident points first. A normals filter (e.g. the one in
+    # update_mesh_points) may split points at sharp edges, which would
+    # otherwise show up as spurious boundary/non-manifold edges below.
+    clean = vtk.vtkCleanPolyData()
+    clean.SetInputData(mesh)
+    clean.Update()
+    cleaned = clean.GetOutput()
+
+    # Watertight / closed check.
+    feature_edges = vtk.vtkFeatureEdges()
+    feature_edges.SetInputData(cleaned)
+    feature_edges.BoundaryEdgesOn()
+    feature_edges.NonManifoldEdgesOn()
+    feature_edges.FeatureEdgesOff()
+    feature_edges.ManifoldEdgesOff()
+    feature_edges.Update()
+
+    n_open_edges = feature_edges.GetOutput().GetNumberOfCells()
+    if n_open_edges > 0:
+        warnings.warn(
+            f"Input mesh has {n_open_edges} boundary/non-manifold edge(s) and "
+            "does not appear to be a closed manifold. The spherical harmonics "
+            "parametrization may be invalid."
+        )
+        # The enclosed-point test is unreliable on open surfaces.
+        return
+
+    # Centroid-inside check (star-shaped proxy).
+    coords = vtknp.vtk_to_numpy(cleaned.GetPoints().GetData())
+    centroid = coords.mean(axis=0)
+
+    centroid_points = vtk.vtkPoints()
+    centroid_points.InsertNextPoint(centroid[0], centroid[1], centroid[2])
+    centroid_polydata = vtk.vtkPolyData()
+    centroid_polydata.SetPoints(centroid_points)
+
+    enclosed = vtk.vtkSelectEnclosedPoints()
+    enclosed.SetInputData(centroid_polydata)
+    enclosed.SetSurfaceData(cleaned)
+    enclosed.Update()
+
+    if not enclosed.IsInside(0):
+        warnings.warn(
+            "Mesh centroid seems to fall outside the object. This indicates "
+            "the mesh may not be star-shaped about its centroid and may not be "
+            "suitable for spherical harmonics parameterization."
+        )
+
+
 def rotate_image_2d(image: np.array, angle: float, interpolation_order: int = 0):
     """Rotate multichannel image in 2D by a given angle. The
     expected shape of image is (C,Z,Y,X). The rotation will
@@ -227,7 +371,45 @@ def align_image_2d(
 
     z, y, x = np.where(image[alignment_channel])
 
-    xy = np.hstack([x.reshape(-1, 1), y.reshape(-1, 1)])
+    angle = get_alignment_angle_2d(x=x, y=y, make_unique=make_unique)
+
+    if compute_aligned_image is True:
+        # Apply skimage rotation clock-wise
+        img_aligned = rotate_image_2d(image=image, angle=angle)
+
+        return img_aligned, angle
+
+    return angle
+
+
+def get_alignment_angle_2d(x: np.array, y: np.array, make_unique: bool = False):
+    """Compute the 2D alignment angle of a set of points via PCA.
+
+    The angle is defined such that rotating the points by it makes the
+    longest (principal) axis of the 2d point cloud horizontal (along x).
+    This is the shared core used by both the image-based alignment
+    (``align_image_2d``) and the mesh/point-cloud alignment
+    (``align_points_2d``).
+
+    Parameters
+    ----------
+    x : np.array
+        x coordinates of the points.
+    y : np.array
+        y coordinates of the points.
+    make_unique : bool
+        Set true to make sure the alignment rotation is unique. The
+        principal axis is otherwise ambiguous up to a 180 degree flip;
+        when set, the flip is resolved using the skewness of the rotated
+        x coordinate so the result is deterministic.
+
+    Returns
+    -------
+    angle : float
+        Angle in degrees used to align the shape.
+    """
+
+    xy = np.hstack([np.asarray(x).reshape(-1, 1), np.asarray(y).reshape(-1, 1)])
 
     pca = skdecomp.PCA(n_components=2)
 
@@ -258,11 +440,54 @@ def align_image_2d(
         if np.abs(eigenvecs[0][0]) > EPS:
             angle = 180.0 * np.arctan(eigenvecs[0][1] / eigenvecs[0][0]) / np.pi
 
-    if compute_aligned_image is True:
-        # Apply skimage rotation clock-wise
-        img_aligned = rotate_image_2d(image=image, angle=angle)
+    return angle
 
-        return img_aligned, angle
+
+def align_points_2d(
+    x: np.array,
+    y: np.array,
+    make_unique: bool = False,
+    compute_aligned_points: bool = True,
+):
+    """Align a 2d point cloud so that its longest (principal) axis is
+    horizontal (along x). This is the point-cloud analog of
+    ``align_image_2d`` and is used by the mesh-based parametrization to
+    reproduce the image alignment without going through an image.
+
+    The rotation is applied in the xy plane only; any z coordinates are
+    left untouched by the caller, matching the 2d-alignment intent.
+
+    Parameters
+    ----------
+    x : np.array
+        x coordinates of the points.
+    y : np.array
+        y coordinates of the points.
+    make_unique : bool
+        Set true to make sure the alignment rotation is unique.
+    compute_aligned_points : bool
+        Set false to only compute and return the alignment angle.
+
+    Returns
+    -------
+    x_rot : np.array
+        Aligned x coordinates (only if compute_aligned_points is True).
+    y_rot : np.array
+        Aligned y coordinates (only if compute_aligned_points is True).
+    angle : float
+        Angle in degrees used to align the shape.
+    """
+
+    angle = get_alignment_angle_2d(x=x, y=y, make_unique=make_unique)
+
+    if compute_aligned_points is True:
+        rad = np.pi * angle / 180.0
+        # Rotate so the principal axis aligns with x. This matches the
+        # x_rot convention used inside get_alignment_angle_2d.
+        x_rot = x * np.cos(rad) + y * np.sin(rad)
+        y_rot = -x * np.sin(rad) + y * np.cos(rad)
+
+        return x_rot, y_rot, angle
 
     return angle
 

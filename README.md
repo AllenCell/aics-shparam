@@ -117,6 +117,32 @@ plt.show()
 
 ![PC1 vs. PC2](https://github.com/AllenCell/aics-shparam/blob/main/docs/pc12.png?raw=true)
 
+## Parametrizing a mesh directly
+
+If you already have a surface mesh, you can compute the coefficients without
+voxelizing it back into an image. Pass either a `vtkPolyData` object or raw
+`vertices` + `faces` arrays:
+
+```python
+from aicsshparam import shparam, shtools
+
+# From a vtkPolyData mesh:
+(coeffs, grid_rec), (_, mesh, grid, transform) = shparam.get_shcoeffs_from_mesh(
+    mesh=mesh, lmax=4
+)
+
+# Or directly from numpy arrays (vertices: (N, 3), faces: (M, 3) triangles):
+(coeffs, grid_rec), (_, mesh, grid, transform) = shparam.get_shcoeffs_from_vertices_faces(
+    vertices=vertices, faces=faces, lmax=4
+)
+
+mse = shtools.get_reconstruction_error(grid, grid_rec)
+```
+
+The return shape matches `get_shcoeffs`; the `image_` slot is `None` for mesh
+input. The surface is expected to be closed and star-shaped about its centroid;
+a warning (not an error) is raised when those assumptions appear to be violated.
+
 
 ## Reference
 
